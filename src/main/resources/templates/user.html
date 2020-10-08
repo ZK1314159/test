@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>user</title>
+</head>
+<body>
+
+<img src="http://up.enterdesk.com/edpic/85/ef/98/85ef980bb38dc754b821d34e9d2db7c6.jpg"/>
+
+<img src="../picture.jpg"/><!--本地可以用，但启动服务后的网页上无法显示-->
+
+
+<div th:if="${not #lists.isEmpty(userList)}">
+    userList:<br/>
+    <ul th:each="list : ${userList}">
+        <li>
+            id:<span th:text="${list.userId}"></span> <br/>
+            name:<span th:text="${list.userName}"></span>
+        </li>
+    </ul>
+</div>
+
+<hr/>
+
+Please input user name to add user:<br/><br/>
+<form method="POST">
+    <input type="text" name="userName" size="25"><br/>
+    <input type="submit" value="submit">
+</form>
+
+<br/>
+<hr/>
+
+Please input user id to delete user:<br/><br/>
+<form method="POST">
+    <input type="text" name="userId" size="25"><br/>
+    <input type="submit" value="submit">
+</form>
+
+</body>
+</html>

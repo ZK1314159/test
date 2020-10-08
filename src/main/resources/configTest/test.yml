@@ -1,0 +1,4 @@
+config:
+  property:
+    id: 12345
+    name: nice
