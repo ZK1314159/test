@@ -20,8 +20,8 @@ public class TestServiceImpl implements TestService {
     @Autowired
     private YmlPropertyBeanConfig user;
 
-    @Value("${test.value}")
-    private String value;
+//    @Value("${test.value}")
+//    private String value;
 
     @Value("${config.property.id}")
     private Integer id;
@@ -37,6 +37,6 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void nacosTest() {
-        log.info("nacos property: " + value);
+//        log.info("nacos property: " + value);
     }
 }

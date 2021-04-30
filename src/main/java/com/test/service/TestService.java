@@ -9,5 +9,8 @@ public interface TestService {
 
     void ymlPropertyTest();
 
+    /**
+     * 测试nacos
+     */
     void nacosTest();
 }
