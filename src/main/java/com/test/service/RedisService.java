@@ -10,5 +10,10 @@ public interface RedisService {
 
     void set(String key, Object value);
 
-    void get(String key);
+    String get(String key);
+
+    void stringSet(String key, String value);
+
+    String stringGet(String key);
+
 }
