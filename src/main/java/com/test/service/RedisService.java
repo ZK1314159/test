@@ -12,6 +12,8 @@ public interface RedisService {
 
     String get(String key);
 
+    Object getObject(String key);
+
     void stringSet(String key, String value);
 
     String stringGet(String key);

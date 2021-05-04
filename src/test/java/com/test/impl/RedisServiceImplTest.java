@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.test.entity.User;
 import com.test.service.RedisService;
 
 /**
@@ -34,6 +35,16 @@ class RedisServiceImplTest {
         String value = "美女";
         redisService.stringSet(key, value);
         String result = redisService.stringGet(key);
+    }
+
+    @Test
+    void testRedisTemplateForObject() {
+        String key = "jsontest";
+        User user = new User();
+        user.setUserId(1234);
+        user.setUserName("hahah4");
+        redisService.set(key, user);
+        User result = (User) redisService.getObject(key);
     }
 
 }
