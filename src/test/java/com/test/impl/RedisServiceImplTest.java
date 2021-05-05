@@ -42,7 +42,7 @@ class RedisServiceImplTest {
         String key = "jsontest";
         User user = new User();
         user.setUserId(1234);
-        user.setUserName("hahah4");
+        user.setUserName("haha789美女");
         redisService.set(key, user);
         User result = (User) redisService.getObject(key);
     }
