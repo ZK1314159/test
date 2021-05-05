@@ -39,10 +39,10 @@ public class TestController {
     @Value("${test.name}")
     private String name;
 
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.dynamic.datasource.master.username}")
     private String username;
 
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.dynamic.datasource.master.password}")
     private String password;
 
     @RequestMapping(value = "/log", produces = "application/json", method = RequestMethod.GET)

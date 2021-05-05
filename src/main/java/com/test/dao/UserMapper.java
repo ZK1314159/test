@@ -9,17 +9,25 @@ package com.test.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.test.entity.User;
 
 @Mapper
-@Component
+@Repository
 public interface UserMapper {
+
+    @Select("select id as userId, name as userName from user")
     List<User> userList();
 
+    @Insert("insert into user(name) values(#{userName})")
     void addUser(User user);
 
+    @Delete("delete from user where id = #{id}")
     void deleteUser(Integer id);
 }
