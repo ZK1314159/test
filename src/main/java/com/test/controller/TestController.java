@@ -64,8 +64,9 @@ public class TestController {
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public void getTest(@RequestParam String userId) {
-        logger.info("get");
+    public Integer getTest(@RequestParam Integer userId) {
+        logger.info("get test userId : " + userId);
+        return userId;
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)
