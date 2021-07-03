@@ -1,7 +1,7 @@
 package com.test.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -13,19 +13,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+import com.test.entity.FrontTestDTO;
 import com.test.entity.ResultDto;
 import com.test.entity.User;
 import com.test.service.CommonService;
 import com.test.service.TestService;
 
 /**
- * Description：<br>
+ * Description
  *
- * @author zeng.kai <br>
- * CreateDate：2020/3/16 14:32 <br>
+ * @author zengkai
+ * Date: 2021/7/3 15:36
  */
 @RestController
 @RequestMapping("/test")
+@Slf4j
 public class TestController {
 
     @Autowired
@@ -33,9 +36,7 @@ public class TestController {
 
     @Autowired
     private TestService testService;
-
-    private static final Logger logger = LoggerFactory.getLogger(TestController.class);
-
+    
     @Value("${test.name}")
     private String name;
 
@@ -48,7 +49,7 @@ public class TestController {
     @RequestMapping(value = "/log", produces = "application/json", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ResultDto logTest() {
-        logger.info("test log!");
+        log.info("test log!");
         ResultDto result = new ResultDto();
         return result;
     }
@@ -56,23 +57,31 @@ public class TestController {
     @RequestMapping(value = "/properties", produces = "application/json", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ResultDto propertiesTest() {
-        logger.info("test.name={}", name);
-        logger.info("username={}", username);
-        logger.info("password={}", password);
+        log.info("test.name={}", name);
+        log.info("username={}", username);
+        log.info("password={}", password);
         ResultDto result = new ResultDto();
         return result;
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public Integer getTest(@RequestParam Integer userId) {
-        logger.info("get test userId : " + userId);
-        return userId;
+    @GetMapping(value = "/get")
+    public FrontTestDTO getTest(@RequestParam Integer userId, @RequestParam List<Integer> uidList) {
+        log.info("get test userId : " + userId);
+        log.info("get test uidList : " + uidList);
+        FrontTestDTO frontTestDTO = new FrontTestDTO();
+        frontTestDTO.setTestByte((byte) 1);
+        frontTestDTO.setTestShort((short) 2);
+        frontTestDTO.setTestLong(7998L);
+        frontTestDTO.setTestFloat(7.8f);
+        frontTestDTO.setTestBoolean(true);
+        frontTestDTO.setCharacter('d');
+        return frontTestDTO;
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)
     public void postTest(@RequestBody User user) {
-        logger.info("post");
-        logger.info("user.userId : " + user.getUserId());
+        log.info("post");
+        log.info("user.userId : " + user.getUserId());
     }
 
     @GetMapping("/starter")

@@ -1,5 +1,7 @@
 package com.test.entity;
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -11,22 +13,24 @@ import lombok.Data;
 @Data
 public class FrontTestDTO {
 
-    private Byte aByte;
+    private Byte testByte;
 
-    private Short aShort;
+    private Short testShort;
 
     private Integer integer;
 
-    private Long aLong;
+    private Long testLong;
 
-    private Float aFloat;
+    private Float testFloat;
 
-    private Double aDouble;
+    private Double testDouble;
 
-    private Boolean aBoolean;
+    private Boolean testBoolean;
 
     private Character character;
 
     private String string;
+
+    private List<String> stringList;
 
 }
