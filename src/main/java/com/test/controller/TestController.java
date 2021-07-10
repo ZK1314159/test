@@ -65,9 +65,12 @@ public class TestController {
     }
 
     @GetMapping(value = "/get")
-    public FrontTestDTO getTest(@RequestParam Integer userId, @RequestParam List<Integer> uidList) {
+    public FrontTestDTO getTest(@RequestParam Integer userId, @RequestParam List<Integer> uidList,
+                                @RequestParam Double price, @RequestParam Boolean judge) {
         log.info("get test userId : " + userId);
         log.info("get test uidList : " + uidList);
+        log.info("get test price : " + price);
+        log.info("get test judge : " + judge);
         FrontTestDTO frontTestDTO = new FrontTestDTO();
         frontTestDTO.setTestByte((byte) 1);
         frontTestDTO.setTestShort((short) 2);
