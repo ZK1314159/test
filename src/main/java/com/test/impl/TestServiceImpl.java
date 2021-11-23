@@ -2,11 +2,12 @@ package com.test.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.test.config.YmlPropertyBeanConfig;
 import com.test.service.TestService;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Description
@@ -20,6 +21,9 @@ public class TestServiceImpl implements TestService {
     @Autowired
     private YmlPropertyBeanConfig user;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
 //    @Value("${test.value}")
 //    private String value;
 
@@ -32,7 +36,8 @@ public class TestServiceImpl implements TestService {
     @Override
     public void ymlPropertyTest() {
         log.info("info: " + user.getId() + " " + user.getName());
-
+        TestService testService = applicationContext.getBean("testServiceImpl", TestService.class);
+        log.info("5734tuiefer8" + testService);
     }
 
     @Override
