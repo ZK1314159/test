@@ -20,8 +20,8 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @RequestMapping(value = "annotation", method = RequestMethod.GET)
-    void transactionTest() throws IndexOutOfBoundsException {
+    @RequestMapping(value = "/annotation", method = RequestMethod.GET)
+    void transactionTest() throws Exception {
         transactionService.transactionTest();
     }
 }

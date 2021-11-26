@@ -32,6 +32,7 @@ public class UserController {
         return "redirect:/user";
     }
 
+    // params参数意味着请求参数中必须包含该参数
     @RequestMapping(method = RequestMethod.POST, params = "userId")
     public String delete(@RequestParam("userId") Integer userId) {
         userService.deleteUser(userId);

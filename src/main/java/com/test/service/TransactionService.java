@@ -8,5 +8,5 @@ package com.test.service;
  */
 public interface TransactionService {
 
-    void transactionTest() throws IndexOutOfBoundsException;
+    void transactionTest() throws Exception;
 }
