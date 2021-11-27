@@ -60,7 +60,7 @@ mybatis-plus:
 test:
   user:
     id: 12
-    name: 'zengkai'
+    name: zengkai
 property:
   test:
     id: 1324
