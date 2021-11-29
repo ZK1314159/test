@@ -1,5 +1,7 @@
 package com.test.impl;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,9 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import com.test.config.YmlPropertyBeanConfig;
+import com.test.entity.User;
 import com.test.service.TestService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Description
@@ -60,5 +64,14 @@ public class TestServiceImpl implements TestService {
     @Override
     public void nacosTest() {
 //        log.info("nacos property: " + value);
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("test.txt"));
+        User user = new User();
+        user.setUserId(12);
+        user.setUserName("jack");
+        outputStream.writeObject(user);
     }
 }
