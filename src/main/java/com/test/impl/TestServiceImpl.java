@@ -1,5 +1,9 @@
 package com.test.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -32,6 +36,19 @@ public class TestServiceImpl implements TestService {
 
     @Value("${test.name}")
     private String name;
+
+    private void test() {
+        // 数组转集合
+        // int[]无法直接转换为List<Integer>, 需要自己手动写循环
+        // Integer[]可以直接转换为List<Integer>
+        Integer[] ints = new Integer[] {1, 3, 5};
+        List<Integer> tmpList = Arrays.asList(ints);
+        List<Integer> list = new ArrayList<>(tmpList);
+
+        // 集合转数组
+        Integer[] tmpArray = new Integer[list.size()];
+        Integer[] array = list.toArray(tmpArray);
+    }
 
     @Override
     public void ymlPropertyTest() {
