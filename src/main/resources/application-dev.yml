@@ -65,3 +65,12 @@ property:
   test:
     id: 1324
     name: zengkai
+show:
+  flow:
+    add-show:
+      push-channel: true
+      push-wencai: true
+    edit-show:
+      push-channel: true
+      push-wencai: true
+

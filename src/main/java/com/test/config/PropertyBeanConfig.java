@@ -3,16 +3,14 @@ package com.test.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * @Description
  * @Author zengkai
  * @Date 2020/10/6 15:06
  */
-@Getter
-@Setter
+@Data
 @Configuration
 @ConfigurationProperties("property.test")
 public class PropertyBeanConfig {

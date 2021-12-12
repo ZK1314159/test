@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import com.test.config.ShowConfig;
 import com.test.entity.FrontTestDTO;
 import com.test.entity.ResultDto;
+import com.test.entity.Show;
 import com.test.entity.User;
 import com.test.service.CommonService;
+import com.test.service.OperationFlowService;
 import com.test.service.TestService;
 
 /**
@@ -36,6 +39,9 @@ public class TestController {
 
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private OperationFlowService operationFlowService;
     
     @Value("${test.name}")
     private String name;
@@ -103,4 +109,17 @@ public class TestController {
         testService.ymlPropertyTest();
         return new ResultDto();
     }
+
+    @GetMapping("/reflect")
+    public ResultDto reflectTest() {
+        ShowConfig.OperationFlow operationFlow = new ShowConfig.OperationFlow();
+        operationFlow.setPushChannel(false);
+        operationFlow.setPushWencai(true);
+        Show show = new Show();
+        show.setSid(123);
+        show.setTitle("dfjdfj");
+        operationFlowService.operate(operationFlow, show);
+        return new ResultDto();
+    }
+
 }
