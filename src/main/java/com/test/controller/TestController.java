@@ -24,6 +24,7 @@ import com.test.service.OperationFlowService;
 import com.test.service.TestService;
 import com.test.show.FlowClient;
 import com.test.show.OperateType;
+import com.test.show.decorator.BackOperateFlowClient;
 
 /**
  * Description
@@ -47,6 +48,9 @@ public class TestController {
 
     @Autowired
     private FlowClient flowClient;
+
+    @Autowired
+    private BackOperateFlowClient backOperateFlowClient;
     
     @Value("${test.name}")
     private String name;
@@ -133,6 +137,15 @@ public class TestController {
         show.setSid(123);
         show.setTitle("dfjdfj");
         flowClient.operateFlow(OperateType.ADDSHOW, show);
+        return new ResultDto();
+    }
+
+    @GetMapping("/decorator")
+    public ResultDto decorator() {
+        Show show = new Show();
+        show.setSid(123);
+        show.setTitle("dfjdfj");
+        backOperateFlowClient.operate(OperateType.ADDSHOW, show);
         return new ResultDto();
     }
 
