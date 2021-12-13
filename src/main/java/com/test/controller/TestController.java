@@ -21,6 +21,7 @@ import com.test.entity.Show;
 import com.test.entity.User;
 import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
+import com.test.service.OperationFlowServiceNew;
 import com.test.service.TestService;
 import com.test.show.FlowClient;
 import com.test.show.OperateType;
@@ -51,6 +52,9 @@ public class TestController {
 
     @Autowired
     private BackOperateFlowClient backOperateFlowClient;
+
+    @Autowired
+    private OperationFlowServiceNew operationFlowServiceNew;
     
     @Value("${test.name}")
     private String name;
@@ -146,6 +150,15 @@ public class TestController {
         show.setSid(123);
         show.setTitle("dfjdfj");
         backOperateFlowClient.operate(OperateType.ADDSHOW, show);
+        return new ResultDto();
+    }
+
+    @GetMapping("/newReflect")
+    public ResultDto newReflect() {
+        Show show = new Show();
+        show.setSid(123);
+        show.setTitle("dfjdfj");
+        operationFlowServiceNew.operate("addShow", show);
         return new ResultDto();
     }
 

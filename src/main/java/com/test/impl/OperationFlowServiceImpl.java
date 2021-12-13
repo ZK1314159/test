@@ -36,8 +36,8 @@ public class OperationFlowServiceImpl implements OperationFlowService {
             List<Field> fieldList = new ArrayList<>(fieldListTmp);
             fieldList.sort(Comparator.comparingInt((v) -> v.getAnnotation(FieldOrder.class).value()));
             for (Field field : fieldList) {
-            String fieldName = field.getName();
-            field.setAccessible(true);
+                String fieldName = field.getName();
+                field.setAccessible(true);
                 try {
                     Boolean needOperate = (Boolean) field.get(operationFlow);
                     if (needOperate != null && needOperate) {
