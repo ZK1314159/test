@@ -22,6 +22,8 @@ import com.test.entity.User;
 import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.TestService;
+import com.test.show.FlowClient;
+import com.test.show.OperateType;
 
 /**
  * Description
@@ -42,6 +44,9 @@ public class TestController {
 
     @Autowired
     private OperationFlowService operationFlowService;
+
+    @Autowired
+    private FlowClient flowClient;
     
     @Value("${test.name}")
     private String name;
@@ -119,6 +124,15 @@ public class TestController {
         show.setSid(123);
         show.setTitle("dfjdfj");
         operationFlowService.operate(operationFlow, show);
+        return new ResultDto();
+    }
+
+    @GetMapping("/show")
+    public ResultDto showTest() {
+        Show show = new Show();
+        show.setSid(123);
+        show.setTitle("dfjdfj");
+        flowClient.operateFlow(OperateType.ADDSHOW, show);
         return new ResultDto();
     }
 

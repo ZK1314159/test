@@ -70,7 +70,9 @@ show:
     add-show:
       push-channel: true
       push-wencai: true
+      deleteCache: true
     edit-show:
       push-channel: true
       push-wencai: true
+      deleteCache: false
 

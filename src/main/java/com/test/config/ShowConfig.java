@@ -22,9 +22,11 @@ public class ShowConfig {
 
     @Data
     public static class OperationFlow {
+        @FieldOrder(1)
+        private boolean deleteCache;
         @FieldOrder(2)
         private boolean pushChannel;
-        @FieldOrder(1)
+        @FieldOrder(3)
         private boolean pushWencai;
     }
 }
