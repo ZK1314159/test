@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.test.config.ShowConfig;
 import com.test.entity.Show;
-import com.test.show.OperateType;
+import com.test.show.strategy.OperateType;
 
 /**
  * Description

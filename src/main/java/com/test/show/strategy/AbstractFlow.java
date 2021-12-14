@@ -1,4 +1,4 @@
-package com.test.show;
+package com.test.show.strategy;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package com.test.show;
+package com.test.show.strategy;
 
 import lombok.Getter;
 

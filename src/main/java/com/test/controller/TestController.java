@@ -23,8 +23,8 @@ import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
 import com.test.service.TestService;
-import com.test.show.FlowClient;
-import com.test.show.OperateType;
+import com.test.show.strategy.FlowClient;
+import com.test.show.strategy.OperateType;
 import com.test.show.decorator.BackOperateFlowClient;
 
 /**
