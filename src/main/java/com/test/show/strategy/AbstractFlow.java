@@ -21,12 +21,12 @@ import com.test.entity.Show;
  * @author zengkai
  * Date: 2021/12/13 10:51
  */
-public class AbstractFlow {
+public abstract class AbstractFlow {
 
     @Autowired
     private ShowConfig showConfig;
 
-    void operate(String type, Show show) {
+    public void operate(String type, Show show) {
         Class<ShowConfig> showConfigClass = ShowConfig.class;
         try {
             Field field = showConfigClass.getDeclaredField(type);
@@ -57,11 +57,10 @@ public class AbstractFlow {
 
     }
 
-    void pushChannel(Show show) {
-    }
 
-    void pushWencai(Show show) {
-    }
+    abstract void pushChannel(Show show);
+
+    abstract void pushWencai(Show show);
 
     void deleteCache(Show show) {
         System.out.println("deleteCache");

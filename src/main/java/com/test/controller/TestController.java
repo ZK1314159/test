@@ -23,9 +23,10 @@ import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
 import com.test.service.TestService;
+import com.test.show.decorator.BackOperateFlowClient;
+import com.test.show.strategy.AbstractFlow;
 import com.test.show.strategy.FlowClient;
 import com.test.show.strategy.OperateType;
-import com.test.show.decorator.BackOperateFlowClient;
 
 /**
  * Description
@@ -55,6 +56,9 @@ public class TestController {
 
     @Autowired
     private OperationFlowServiceNew operationFlowServiceNew;
+
+    @Autowired
+    private AbstractFlow abstractFlow;
     
     @Value("${test.name}")
     private String name;
@@ -159,6 +163,15 @@ public class TestController {
         show.setSid(123);
         show.setTitle("dfjdfj");
         operationFlowServiceNew.operate("addShow", show);
+        return new ResultDto();
+    }
+
+    @GetMapping("/abstract")
+    public ResultDto abstractTest() {
+        Show show = new Show();
+        show.setSid(123);
+        show.setTitle("dfjdfj");
+        abstractFlow.operate("addShow", show);
         return new ResultDto();
     }
 
