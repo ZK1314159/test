@@ -1,11 +1,14 @@
 package com.test.impl;
 
-import com.test.service.RedisService;
-import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
+import com.test.service.RedisService;
 
 /**
  * Description
@@ -23,8 +26,22 @@ public class RedisServiceImpl implements RedisService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     @Override
     public void set(String key, Object value) {
+
+        String lockKey = "fsdjfsdk234234";
+        RLock lock = redissonClient.getLock(lockKey);
+        log.info(Thread.currentThread().getName() + ": " + Thread.currentThread().getId());
+        try {
+            lock.lock();
+//            lock.lock(40, TimeUnit.SECONDS);
+//            lock.tryLock();
+        } finally {
+//            lock.unlock();
+        }
         redisTemplate.opsForValue().set(key, value);
         log.info("set value success");
     }
