@@ -1,16 +1,15 @@
 package com.test.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.test.entity.User;
-import com.test.dao.UserMapper;
-
-import java.util.List;
 
 public interface UserService {
 
-    List<User> userList();
+    List<User> userList(HttpServletRequest httpServletRequest, HttpServletResponse httpResponse);
 
     void addUser(User user);
 

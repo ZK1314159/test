@@ -2,6 +2,9 @@ package com.test.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +23,8 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String list(Model model) {
-        List<User> userList = userService.userList();
+    public String list(Model model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        List<User> userList = userService.userList(httpServletRequest, httpServletResponse);
         model.addAttribute("userList", userList);
         return "user";
     }
