@@ -1,16 +1,17 @@
 package com.test.impl;
 
 import java.util.List;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.test.dao.UserMapper;
 import com.test.entity.User;
@@ -24,12 +25,21 @@ import com.test.service.UserService;
  */
 @DS("slave")
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
 
     public List<User> userList(HttpServletRequest httpServletRequest, HttpServletResponse httpResponse) {
+        HttpSession httpSession = httpServletRequest.getSession();
+        if (httpSession.getAttribute("userId") == null) {
+            //将在redis操作session
+            httpSession.setAttribute("userId","123456");
+            log.info("====session为空=======");
+        } else {
+            log.info("=========session========" + httpSession.getAttribute("userId"));
+        }
         Cookie[] cookies = httpServletRequest.getCookies();
         String userInfo = getCookie(cookies, "userInfo");
         if (userInfo == null || userInfo.isEmpty()) {
