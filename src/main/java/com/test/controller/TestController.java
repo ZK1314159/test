@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import com.test.config.ShowConfig;
+import com.test.entity.FrontPostTest;
 import com.test.entity.FrontTestDTO;
 import com.test.entity.ResultDto;
 import com.test.entity.Show;
-import com.test.entity.User;
 import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
@@ -105,9 +105,12 @@ public class TestController {
     }
 
     @RequestMapping(value = "/post", method = RequestMethod.POST)
-    public void postTest(@RequestBody User user) {
+    public FrontTestDTO postTest(@RequestBody FrontPostTest frontPostTest) {
         log.info("post");
-        log.info("user.userId : " + user.getUserId());
+        log.info("user.userId : " + frontPostTest.getUserId());
+        FrontTestDTO frontTestDTO = new FrontTestDTO();
+        frontTestDTO.setTestLong(7998L);
+        return frontTestDTO;
     }
 
     @GetMapping("/starter")
