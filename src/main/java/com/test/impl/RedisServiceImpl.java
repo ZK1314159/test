@@ -1,5 +1,7 @@
 package com.test.impl;
 
+import java.time.Duration;
+
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void set(String key, Object value) {
+
+        stringRedisTemplate.opsForValue().setIfAbsent("fjdjf", "dfjdk", Duration.ofSeconds(6));
 
         String lockKey = "fsdjfsdk234234";
         RLock lock = redissonClient.getLock(lockKey);

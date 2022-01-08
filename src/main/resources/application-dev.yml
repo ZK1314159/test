@@ -30,6 +30,9 @@ spring:
     port: 6379
     #Redis服务器连接密码（默认为空）
     password: 123456
+    lettuce:
+      pool:
+        max-idle: 8
   datasource:
     dynamic:
       primary: master
