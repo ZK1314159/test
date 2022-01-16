@@ -19,6 +19,7 @@ import com.test.entity.FrontPostTest;
 import com.test.entity.FrontTestDTO;
 import com.test.entity.ResultDto;
 import com.test.entity.Show;
+import com.test.feign.TestFeignClient;
 import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
@@ -38,6 +39,9 @@ import com.test.show.strategy.OperateType;
 @RequestMapping("/test")
 @Slf4j
 public class TestController {
+
+    @Autowired
+    private TestFeignClient testFeignClient;
 
     @Autowired
     private CommonService commonService;
@@ -175,6 +179,12 @@ public class TestController {
         show.setSid(123);
         show.setTitle("dfjdfj");
         abstractFlow.operate("addShow", show);
+        return new ResultDto();
+    }
+
+    @GetMapping("/feign")
+    public ResultDto feign() {
+        String result = testFeignClient.test(1234);
         return new ResultDto();
     }
 

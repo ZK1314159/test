@@ -2,6 +2,7 @@ package com.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -12,6 +13,7 @@ import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 @NacosPropertySource(dataId = "test", autoRefreshed = true)
 @SpringBootApplication
 @Slf4j
+@EnableFeignClients("com.test.feign")
 public class TestApplication implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;

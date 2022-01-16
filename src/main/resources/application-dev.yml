@@ -89,3 +89,34 @@ show:
       push-channel: 1
       deleteCache: 3
 
+feign:
+  client:
+    config:
+      default: # 默认配置
+        loggerLevel: BASIC              # 日志级别，这里是Feign自己的日志级别，同时需要修改Feign的包的LoggerLevel为DEBUG
+        connectTimeout: 500             # 链接超时时间（毫秒）
+        readTimeout: 1000               # 数据读取超时时间（毫秒）
+        retryer: feign.Retryer.Default  # 重试实现类的配置，这里使用默认的实现类，间隔100毫秒，最大重试次数5次
+  httpclient:
+    enabled: true
+    connection-timeout: 2000       # 连接超时（毫秒）
+    time-to-live: 1                # 连接存活时长
+    time-to-live-unit: minutes     # 连接存活时长单位
+    max-connections: 300           # 最大连接数,默认200
+    max-connections-per-route: 50  # 每个路由的最大连接数， 也就是同一个接口允许的最大并发
+  hystrix:
+    enabled: true
+# OpenFeign天生支持hystrix进行熔断配置，如果使用Sentinel需要自己编写熔断逻辑
+hystrix:
+  threadpool:
+    default:
+      coreSize: 10							   # 配置线程池核心数，默认10
+      maximumSize: 50                          # 配置线程池最大线程数，默认10
+      maxQueueSize: 100                        # 配置线程池等待队列最大大小，默认-1无限制，使用SynchrousQueue，大于0则使用LinkedBlockingQueue，不建议设置太大，会导致线程池迟迟无法扩容导致长时间等待
+      queueSizeRejectionThreshold: 100         # 配置线程池等待队列拒绝阈值，默认5, maxQueueSize=-1时不生效，等待任务数量大于该值时会被拒绝
+  command:
+    default: # 默认配置
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000 # 熔断的超时时间，（链接超时+读取超时）*重试次数，以上面的配置为例，重试最多进行1次(加上初始一共两次调用)
