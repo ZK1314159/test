@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.test.config.ShowConfig;
 import com.test.entity.FrontPostTest;
 import com.test.entity.FrontTestDTO;
+import com.test.entity.PostRequestDto;
 import com.test.entity.ResultDto;
 import com.test.entity.Show;
 import com.test.feign.TestFeignClient;
@@ -184,7 +185,11 @@ public class TestController {
 
     @GetMapping("/feign")
     public ResultDto feign() {
-        String result = testFeignClient.test(1234);
+//        String result = testFeignClient.test(1234);
+        PostRequestDto requestDto = new PostRequestDto();
+        requestDto.setId(123);
+        requestDto.setName("gdhdfh");
+        PostRequestDto postRequestDto = testFeignClient.post(requestDto);
         return new ResultDto();
     }
 
