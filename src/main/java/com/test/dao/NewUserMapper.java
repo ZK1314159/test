@@ -19,7 +19,7 @@ import com.test.entity.User;
 
 @Mapper
 @Repository
-public interface UserMapper {
+public interface NewUserMapper {
 
     @Select("select id as userId, name as userName from user")
     List<User> userList();
@@ -29,4 +29,5 @@ public interface UserMapper {
 
     @Delete("delete from user where id = #{id}")
     void deleteUser(Integer id);
+
 }

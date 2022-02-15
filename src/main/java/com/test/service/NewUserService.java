@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.test.entity.User;
 
-public interface UserService {
+public interface NewUserService {
 
     List<User> userList(HttpServletRequest httpServletRequest, HttpServletResponse httpResponse);
 

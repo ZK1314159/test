@@ -9,4 +9,7 @@ package com.test.service;
 public interface TransactionService {
 
     void transactionTest() throws Exception;
+
+    void distribute() throws Exception;
+
 }

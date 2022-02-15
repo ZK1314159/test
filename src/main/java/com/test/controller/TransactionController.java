@@ -24,4 +24,10 @@ public class TransactionController {
     void transactionTest() throws Exception {
         transactionService.transactionTest();
     }
+
+    @RequestMapping(value = "/distribute", method = RequestMethod.GET)
+    void distributeTest() throws Exception {
+        transactionService.distribute();
+    }
+
 }
