@@ -74,6 +74,9 @@ public class TestController {
     @Value("${spring.datasource.dynamic.datasource.master.password}")
     private String password;
 
+    @Value("${test.newdata}")
+    private String test;
+
     @RequestMapping(value = "/log", produces = "application/json", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ResultDto logTest() {
@@ -190,6 +193,13 @@ public class TestController {
         requestDto.setId(123);
         requestDto.setName("gdhdfh");
         PostRequestDto postRequestDto = testFeignClient.post(requestDto);
+        return new ResultDto();
+    }
+
+    @GetMapping("/nacosTest")
+    public ResultDto nacosTest() {
+        String value = test;
+        log.info(value);
         return new ResultDto();
     }
 

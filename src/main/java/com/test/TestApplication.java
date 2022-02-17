@@ -1,5 +1,6 @@
 package com.test;
 
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -7,13 +8,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import lombok.extern.slf4j.Slf4j;
-import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 
-//@EnableDubbo
-@NacosPropertySource(dataId = "test", autoRefreshed = true)
 @SpringBootApplication
 @Slf4j
 @EnableFeignClients("com.test.feign")
+@EnableDubbo
 public class TestApplication implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
@@ -28,4 +27,5 @@ public class TestApplication implements ApplicationContextAware {
 //        TestService testService = applicationContext.getBean("testServiceImpl", TestService.class);
 //        log.info("4238ruir" + testService);
     }
+
 }
