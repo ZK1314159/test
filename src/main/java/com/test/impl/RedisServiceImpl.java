@@ -34,7 +34,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void set(String key, Object value) {
 
-        stringRedisTemplate.opsForValue().setIfAbsent("fjdjf", "dfjdk", Duration.ofSeconds(6));
+        redisTemplate.opsForValue().setIfAbsent("fjdjf", "1234", Duration.ofSeconds(300));
 
         String lockKey = "fsdjfsdk234234";
         RLock lock = redissonClient.getLock(lockKey);

@@ -11,12 +11,8 @@ management:
 
 spring:
   redis:
-#    redisson:
-#      config: |
-#        singleServerConfig:
-#          address: "redis://127.0.0.1:6379"
-#          password: 123456
-#        lockWatchdogTimeout: 40000
+    redisson:
+      file: classpath:redisson.yml
     #Redis数据库索引（默认0）
     database: 0
     #Redis服务器地址（默认localhost）
