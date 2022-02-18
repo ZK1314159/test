@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.dynamic.datasource.annotation.DS;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @DS("master")
+    @Transactional(rollbackFor = Exception.class)
     public void addUser(User user) {
         userMapper.addUser(user);
     }

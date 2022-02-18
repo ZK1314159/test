@@ -37,13 +37,13 @@ public class TransactionServiceImpl implements TransactionService {
     public void transactionTest() throws Exception {
 
         User user1 = new User();
-        user1.setUserName("2028");
+        user1.setUserName("2032");
         userMapper.addUser(user1);
 
         try {
             User user2 = new User();
 //            user2.setUserName("2024");
-            userService.addUser(user2);
+            userMapper.addUser(user2);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,8 +52,8 @@ public class TransactionServiceImpl implements TransactionService {
 //        userService.addUser(user2);
 
         User user3 = new User();
-        user3.setUserName("2029");
-        userService.addUser(user3);
+        user3.setUserName("2033");
+        userMapper.addUser(user3);
     }
 
     @Transactional(rollbackFor = Exception.class)
