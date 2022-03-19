@@ -121,3 +121,24 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 3000 # 熔断的超时时间，（链接超时+读取超时）*重试次数，以上面的配置为例，重试最多进行1次(加上初始一共两次调用)
+
+mykafka:
+  #post送审
+  postscan:
+    bootstrap-servers: 10.200.0.101:9092,10.200.0.237:9092,10.200.0.193:9092
+    topic: sns_postscan
+    producer:
+      retries: 3 #发送失败后重试次数
+      batch-size: 16785
+      buffer-memory: 33554432 #32M处理缓冲区
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    jaas:
+      loginModule: org.apache.kafka.common.security.scram.ScramLoginModule
+      controlFlag: required
+      options:
+        username: sns
+        password: 10jqkasns_%^&
+    properties:
+      sasl_mechanism: SCRAM-SHA-256
+    security.protocol: SASL_PLAINTEXT

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import com.test.config.NewKafka;
 import com.test.config.ShowConfig;
 import com.test.entity.FrontPostTest;
 import com.test.entity.FrontTestDTO;
@@ -76,6 +78,20 @@ public class TestController {
 
     @Value("${test.newdata}")
     private String test;
+
+    @Autowired
+    private NewKafka newKafka;
+
+//    @Autowired
+//    private KafkaProperties kafkaProperties;
+
+    @GetMapping("/kafka")
+    public ResultDto kafkaTest() {
+        KafkaProperties postscan = newKafka.getPostscan();
+        ResultDto result = new ResultDto();
+//        Map<String, String> test = kafkaProperties.getProperties();
+        return result;
+    }
 
     @RequestMapping(value = "/log", produces = "application/json", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
