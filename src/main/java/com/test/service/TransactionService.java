@@ -12,4 +12,6 @@ public interface TransactionService {
 
     void distribute() throws Exception;
 
+    void propagate(boolean exception) throws Exception;
+
 }
