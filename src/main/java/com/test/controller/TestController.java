@@ -82,8 +82,34 @@ public class TestController {
     @Autowired
     private NewKafka newKafka;
 
+//    ThreadPoolExecutor threadPoolExecutor =
+//            new ThreadPoolExecutor(3, 6, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(10),
+//                    new ThreadPoolExecutor.CallerRunsPolicy());
+
 //    @Autowired
 //    private KafkaProperties kafkaProperties;
+
+    @GetMapping("/thread")
+    public ResultDto threadTest() {
+        System.out.println(Thread.currentThread().getName() + " start");
+//        try {
+//            Thread.sleep(10000);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println(Thread.currentThread().getName() + " finish");
+//        for (int i = 0; i < 30; i++) {
+//            threadPoolExecutor.submit(() -> {
+//                try {
+//                    Thread.sleep(2000);
+//                    System.out.println(Thread.currentThread().getName() + " finish");
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        }
+        return new ResultDto();
+    }
 
     @GetMapping("/kafka")
     public ResultDto kafkaTest() {
