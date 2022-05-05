@@ -25,5 +25,6 @@ public class MyFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.info("start!!!");
         chain.doFilter(request, response);
+        log.info("end!!!");
     }
 }
