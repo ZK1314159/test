@@ -13,7 +13,7 @@ import com.test.controller.TestController;
  * @author zengkai
  * Date: 2022/5/5 17:06
  */
-@Component
+@Component("myProcessor")
 public class MyProcessor implements BeanPostProcessor {
 
     @Nullable
