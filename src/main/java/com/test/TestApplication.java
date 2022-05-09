@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import lombok.extern.slf4j.Slf4j;
+import com.test.controller.TestController;
 
 @SpringBootApplication(exclude = KafkaAutoConfiguration.class)
 @Slf4j
@@ -27,8 +28,21 @@ public class TestApplication implements ApplicationContextAware {
 
     public static void main(String[] args) {
         SpringApplication.run(TestApplication.class, args);
-//        TestService testService = applicationContext.getBean("testServiceImpl", TestService.class);
-//        log.info("4238ruir" + testService);
+        TestController testController = applicationContext.getBean("testController", TestController.class);
+        log.info("4238ruir" + testController);
+//        AnnotationConfigServletWebServerApplicationContext annotationConfigServletWebApplicationContext =
+//                (AnnotationConfigServletWebServerApplicationContext) applicationContext;
+//        DefaultListableBeanFactory defaultListableBeanFactory =
+//                (DefaultListableBeanFactory) annotationConfigServletWebApplicationContext.getBeanFactory();
+//        ConcurrentHashMap<String, Object> singletonObjects =
+//                (ConcurrentHashMap<String, Object>) defaultListableBeanFactory.getSingletonMutex();
+//        Map<String, Object> aimMap = new HashMap<>();
+//        for (Map.Entry<String, Object> entry : singletonObjects.entrySet()) {
+//            String beanName = entry.getKey();
+//            if (beanName.contains("myProcessor")) {
+//                aimMap.put(entry.getKey(), entry.getValue());
+//            }
+//        }
     }
 
 }

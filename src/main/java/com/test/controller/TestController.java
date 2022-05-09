@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import com.test.config.NewKafka;
 import com.test.config.ShowConfig;
@@ -23,6 +24,7 @@ import com.test.entity.PostRequestDto;
 import com.test.entity.ResultDto;
 import com.test.entity.Show;
 import com.test.feign.TestFeignClient;
+import com.test.service.AopTestService;
 import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
@@ -38,10 +40,13 @@ import com.test.show.strategy.OperateType;
  * @author zengkai
  * Date: 2021/7/3 15:36
  */
-@RestController
+@RestController("testController")
 @RequestMapping("/test")
 @Slf4j
+@Data
 public class TestController {
+
+    private int id = 3;
 
     @Autowired
     private TestFeignClient testFeignClient;
@@ -54,6 +59,9 @@ public class TestController {
 
     @Autowired
     private OperationFlowService operationFlowService;
+
+    @Autowired
+    private AopTestService aopTestService;
 
     @Autowired
     private FlowClient flowClient;
@@ -82,6 +90,13 @@ public class TestController {
     @Autowired
     private NewKafka newKafka;
 
+    @GetMapping("/aop")
+    public ResultDto aopTest() {
+        aopTestService.test();
+        ResultDto result = new ResultDto();
+        return result;
+    }
+
 //    ThreadPoolExecutor threadPoolExecutor =
 //            new ThreadPoolExecutor(3, 6, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(10),
 //                    new ThreadPoolExecutor.CallerRunsPolicy());
@@ -91,7 +106,9 @@ public class TestController {
 
     @GetMapping("/thread")
     public ResultDto threadTest() {
-        System.out.println(Thread.currentThread().getName() + " start");
+        log.info(Thread.currentThread().getName() + " start");
+        TestController testController = new TestController();
+        testController.id = 5;
 //        try {
 //            Thread.sleep(10000);
 //        } catch (Exception e) {
