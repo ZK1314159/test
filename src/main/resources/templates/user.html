@@ -6,13 +6,6 @@
 </head>
 <body>
 
-<img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202108%2F
-21%2F20210821113422_813ba.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q
-=a80&n=0&g=0n&fmt=jpeg?sec=1644217461&t=b31877cd6db3139bbafe384b9cf92071"/>
-
-<img src="../picture.jpg"/><!--本地可以用，但启动服务后的网页上无法显示-->
-
-
 <div th:if="${not #lists.isEmpty(userList)}">
     userList:<br/>
     <ul th:each="list : ${userList}">
@@ -21,6 +14,15 @@
             name:<span th:text="${list.userName}"></span>
         </li>
     </ul>
+</div>
+
+<div>
+    <p>
+        <script src="../static/xss.js"></script>
+        用户的留言板：<br/>
+        <span th:text="${userReview}"></span>
+        <span><script src="../static/xss.js"></script></span>
+    </p>
 </div>
 
 <hr/>
@@ -39,6 +41,15 @@ Please input user id to delete user:<br/><br/>
     <input type="text" name="userId" size="25"><br/>
     <input type="submit" value="submit">
 </form>
+
+<p>
+    网络图片：<br/>
+</p>
+<img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202108%2F
+21%2F20210821113422_813ba.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q
+=a80&n=0&g=0n&fmt=jpeg?sec=1644217461&t=b31877cd6db3139bbafe384b9cf92071"/>
+
+<img src="http://localhost:9000/picture.jpg"/>
 
 </body>
 </html>
