@@ -1,7 +1,6 @@
 package com.test.controller;
 
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,6 +25,8 @@ public class UserController {
     public String list(Model model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         List<User> userList = userService.userList(httpServletRequest, httpServletResponse);
         model.addAttribute("userList", userList);
+        String userReview = "jdkfdkgk <script src=\"../front_end/xss.js\"></script>";
+        model.addAttribute("userReview", userReview);
         return "user";
     }
 
