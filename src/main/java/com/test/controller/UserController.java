@@ -25,7 +25,7 @@ public class UserController {
     public String list(Model model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         List<User> userList = userService.userList(httpServletRequest, httpServletResponse);
         model.addAttribute("userList", userList);
-        String userReview = "jdkfdkgk <script src=\"../front_end/xss.js\"></script>";
+        String userReview = "<script src=\"http://localhost:9000/xss.js\"></script>";
         model.addAttribute("userReview", userReview);
         return "user";
     }

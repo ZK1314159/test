@@ -18,10 +18,11 @@
 
 <div>
     <p>
-        <script src="../static/xss.js"></script>
+        <span id="test">测试XSS</span>
+    </p>
+    <p>
         用户的留言板：<br/>
-        <span th:text="${userReview}"></span>
-        <span><script src="../static/xss.js"></script></span>
+        <span th:utext="${userReview}"></span>
     </p>
 </div>
 
