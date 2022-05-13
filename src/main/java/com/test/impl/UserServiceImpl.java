@@ -39,9 +39,12 @@ public class UserServiceImpl implements UserService {
             log.info("=========session========" + httpSession.getAttribute("userId"));
         }
         Cookie[] cookies = httpServletRequest.getCookies();
-        String userInfo = getCookie(cookies, "userInfo");
+        String userInfo = getCookie(cookies, "userInfo2");
         if (userInfo == null || userInfo.isEmpty()) {
-            httpResponse.addCookie(new Cookie("userInfo", "dkfsdkf"));
+//            httpResponse.addCookie(new Cookie("userInfo", "dkfsdkf"));
+            Cookie cookie = new Cookie("userInfo2", "dkfsdkf343");
+            cookie.setMaxAge(300);
+            httpResponse.addCookie(cookie);
         }
         return userMapper.userList();
     }
@@ -49,6 +52,11 @@ public class UserServiceImpl implements UserService {
     @DS("master")
 //    @Transactional(rollbackFor = Exception.class)
     public void addUser(User user) {
+//        String userName = user.getUserName();
+//        String filteredName = Encode.forHtmlContent(userName);
+//        user.setUserName(filteredName);
+//        PolicyFactory policy = new HtmlPolicyBuilder().toFactory();
+//        String filteredName2 = policy.sanitize(userName);
         userMapper.addUser(user);
     }
 
@@ -60,7 +68,7 @@ public class UserServiceImpl implements UserService {
     private String getCookie(Cookie[] cookies, String key) {
         if (cookies != null && cookies.length >= 1) {
             for (Cookie cookie : cookies) {
-                if ("userInfo".equals(cookie.getName())) {
+                if (key.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
