@@ -177,6 +177,12 @@
             <version>20200713.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-core</artifactId>
+            <version>1.8.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
