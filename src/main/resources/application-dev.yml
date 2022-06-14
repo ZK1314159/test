@@ -142,3 +142,9 @@ mykafka:
     properties:
       sasl_mechanism: SCRAM-SHA-256
     security.protocol: SASL_PLAINTEXT
+
+threadpool:
+  corePoolSize: 1
+  maxPoolSize: 2
+  queueCapacity: 4
+  keepAliveSeconds: 300
