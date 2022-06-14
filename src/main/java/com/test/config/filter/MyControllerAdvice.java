@@ -1,6 +1,5 @@
 package com.test.config.filter;
 
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -10,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author zengkai
  * Date: 2022/5/23 22:23
  */
-@ControllerAdvice
+//@ControllerAdvice
 public class MyControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
