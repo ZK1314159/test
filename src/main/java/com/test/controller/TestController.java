@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import com.test.config.NewKafka;
 import com.test.config.ShowConfig;
+import com.test.config.config_bean.NacosConfigBean;
 import com.test.entity.FrontPostTest;
 import com.test.entity.FrontTestDTO;
 import com.test.entity.PostRequestDto;
@@ -80,6 +81,12 @@ public class TestController {
     @Autowired
     @Qualifier("taskExecutor")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Autowired
+    private NacosConfigBean nacosConfigBean;
+
+    @Autowired
+    private NewKafka newKafka;
     
     @Value("${test.name}")
     private String name;
@@ -92,9 +99,6 @@ public class TestController {
 
     @Value("${test.newdata}")
     private String test;
-
-    @Autowired
-    private NewKafka newKafka;
 
     @GetMapping("/threadPool")
     public ResultDto threadPoolTest() {
@@ -268,7 +272,8 @@ public class TestController {
 
     @GetMapping("/nacosTest")
     public ResultDto nacosTest() {
-        String value = test;
+        String value = nacosConfigBean.getNewdata();
+        String value2 = test;
         log.info(value);
         return new ResultDto();
     }

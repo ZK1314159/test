@@ -1,16 +1,27 @@
 package com.test.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.test.entity.ResultDto;
 import com.test.entity.User;
 import com.test.service.UserService;
 
@@ -18,8 +29,14 @@ import com.test.service.UserService;
 @RequestMapping(value = "/user")
 public class UserController {
 
+    @Resource
+    private Environment env;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping(method = RequestMethod.GET)
     public String list(Model model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -41,6 +58,23 @@ public class UserController {
     public String delete(@RequestParam("userId") Integer userId) {
         userService.deleteUser(userId);
         return "redirect:/user";
+    }
+
+    @GetMapping("/nacosMap")
+    public ResultDto nacosMapTest() {
+        AnnotationConfigServletWebServerApplicationContext context =
+                (AnnotationConfigServletWebServerApplicationContext) applicationContext;
+        DefaultListableBeanFactory defaultListableBeanFactory = context.getDefaultListableBeanFactory();
+        ConcurrentHashMap<String, Object> singletonObjects =
+                (ConcurrentHashMap<String, Object>) defaultListableBeanFactory.getSingletonMutex();
+        List<Object> objectList = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : singletonObjects.entrySet()) {
+            String name = entry.getKey();
+            if (name.startsWith("nacosConfigBean")) {
+                objectList.add(entry.getValue());
+            }
+        }
+        return new ResultDto();
     }
 
 }
