@@ -144,7 +144,7 @@ mykafka:
     security.protocol: SASL_PLAINTEXT
 
 threadpool:
-  corePoolSize: 1
-  maxPoolSize: 2
+  corePoolSize: 3
+  maxPoolSize: 6
   queueCapacity: 4
   keepAliveSeconds: 300

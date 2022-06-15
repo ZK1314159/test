@@ -31,6 +31,7 @@ import com.test.service.AopTestService;
 import com.test.service.CommonService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
+import com.test.service.ScheduleTaskService;
 import com.test.service.TestService;
 import com.test.show.decorator.BackOperateFlowClient;
 import com.test.show.strategy.AbstractFlow;
@@ -87,6 +88,10 @@ public class TestController {
 
     @Autowired
     private NewKafka newKafka;
+
+    @Autowired
+    @Qualifier("scheduleTaskServiceImpl2")
+    private ScheduleTaskService scheduleTaskService;
     
     @Value("${test.name}")
     private String name;
@@ -275,6 +280,12 @@ public class TestController {
         String value = nacosConfigBean.getNewdata();
         String value2 = test;
         log.info(value);
+        return new ResultDto();
+    }
+
+    @GetMapping("/threadPoolCombine")
+    public ResultDto threadPoolCombineTest() {
+        scheduleTaskService.doTask();
         return new ResultDto();
     }
 
