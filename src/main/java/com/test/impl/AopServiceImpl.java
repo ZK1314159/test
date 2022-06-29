@@ -1,5 +1,6 @@
 package com.test.impl;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -56,4 +57,15 @@ public class AopServiceImpl implements AopService {
     @DeclareParents(value = "com.test.impl.CommonServiceImpl",
                     defaultImpl = com.test.impl.IntroductionInterceptorServiceImpl.class)
     public IntroductionInterceptorService introductionInterceptorService;
+
+    public static void main(String[] args) {
+        StopWatch stopWatch = StopWatch.createStarted();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+
+        }
+        System.out.println(stopWatch.getTime());
+        System.out.println(stopWatch.getNanoTime());
+    }
 }
