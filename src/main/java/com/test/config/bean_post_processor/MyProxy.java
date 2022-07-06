@@ -28,9 +28,9 @@ public class MyProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object o, Method method, Object[] objects,
                             MethodProxy methodProxy) throws Throwable {
-        log.info("before method !");
+//        log.info("before method !");
         Object result = methodProxy.invokeSuper(o, objects);
-        log.info("after method !");
+//        log.info("after method !");
         return result;
     }
 

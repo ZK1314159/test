@@ -1,6 +1,7 @@
 package com.test.config.interceptor;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -17,5 +18,12 @@ public class MyWebMvcConfiguration implements WebMvcConfigurer {
 //        registry.addResourceHandler("/resources/**").addResourceLocations("file:D:/Software/Work/Data/Idea/Projects" +
 //                "/Springboot/test/src/main/resources/");
 //    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new MyInterceptor()).
+                excludePathPatterns("/user/**")  // 放行
+                .addPathPatterns("/**");
+    }
 
 }
