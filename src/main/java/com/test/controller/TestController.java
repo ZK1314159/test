@@ -261,7 +261,6 @@ public class TestController {
         Show show = new Show();
         show.setSid(123);
         show.setTitle("dfjdfj");
-        abstractFlow.operate("addShow", show);
         return new ResultDto();
     }
 
