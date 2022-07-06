@@ -19,14 +19,14 @@ import lombok.extern.slf4j.Slf4j;
  * @author zengkai
  * Date: 2022/5/5 15:21
  */
-@Component("myFilter")
+@Component("myFilter2")
 @Slf4j
-@Order(1)
-public class MyFilter implements Filter {
+@Order(2)
+public class MyFilter2 implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        log.info("start!!!");
+//        log.info("start!!!2222");
         chain.doFilter(request, response);
 //        log.info("end!!!");
     }
