@@ -1,6 +1,8 @@
 package com.test.controller;
 
 import java.util.List;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +35,7 @@ import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
 import com.test.service.ScheduleTaskService;
 import com.test.service.TestService;
+import com.test.show.chain.ChainClient;
 import com.test.show.decorator.BackOperateFlowClient;
 import com.test.show.strategy.AbstractFlow;
 import com.test.show.strategy.FlowClient;
@@ -92,6 +95,9 @@ public class TestController {
     @Autowired
     @Qualifier("scheduleTaskServiceImpl2")
     private ScheduleTaskService scheduleTaskService;
+
+    @Autowired
+    private ChainClient chainClient;
     
     @Value("${test.name}")
     private String name;
@@ -285,6 +291,13 @@ public class TestController {
     @GetMapping("/threadPoolCombine")
     public ResultDto threadPoolCombineTest() {
         scheduleTaskService.doTask();
+        return new ResultDto();
+    }
+
+    @GetMapping("/chainTest")
+    public ResultDto chainTest(ServletRequest request, ServletResponse response) throws Exception {
+
+        chainClient.filter(request, response, OperateType.ADDSHOW.getType());
         return new ResultDto();
     }
 
