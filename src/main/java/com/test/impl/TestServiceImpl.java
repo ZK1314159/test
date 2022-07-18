@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -74,8 +75,12 @@ public class TestServiceImpl implements TestService {
 
 
     public static void main(String[] args) throws Exception {
-        String s = "fdjfkj";
-        String s1 = s.replace("dj", "newchar");
-        String s2 = s.replaceAll("dj", "newchar");
+        MDC.put("UUID", "TEST");
+        String word = MDC.get("UUID");
+        Thread thread = new Thread(() -> {
+            MDC.put("UUID", word);
+            System.out.println(MDC.get("UUID"));
+        });
+        thread.start();
     }
 }
