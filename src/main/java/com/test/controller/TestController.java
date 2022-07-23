@@ -31,6 +31,7 @@ import com.test.entity.Show;
 import com.test.feign.TestFeignClient;
 import com.test.service.AopTestService;
 import com.test.service.CommonService;
+import com.test.service.KafkaProducerService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
 import com.test.service.ScheduleTaskService;
@@ -95,6 +96,9 @@ public class TestController {
     @Autowired
     @Qualifier("scheduleTaskServiceImpl2")
     private ScheduleTaskService scheduleTaskService;
+
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
 
     @Autowired
     private ChainClient chainClient;
@@ -298,6 +302,12 @@ public class TestController {
     public ResultDto chainTest(ServletRequest request, ServletResponse response) throws Exception {
 
         chainClient.filter(request, response, OperateType.ADDSHOW.getType());
+        return new ResultDto();
+    }
+
+    @GetMapping("/kafkaRest")
+    public ResultDto kafkaRest() {
+        kafkaProducerService.send();
         return new ResultDto();
     }
 

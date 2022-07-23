@@ -10,6 +10,20 @@ management:
         include: '*'
 
 spring:
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    producer:
+      retries: 3 #发送失败后重试次数
+      batch-size: 16785
+      buffer-memory: 33554432 #32M处理缓冲区
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: local #群组
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: latest
   redis:
     redisson:
       file: classpath:redisson.yml
