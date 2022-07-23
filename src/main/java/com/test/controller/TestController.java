@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.test.config.NewKafka;
 import com.test.config.ShowConfig;
 import com.test.config.config_bean.NacosConfigBean;
+import com.test.entity.ArticleEntity;
 import com.test.entity.FrontPostTest;
 import com.test.entity.FrontTestDTO;
 import com.test.entity.PostRequestDto;
@@ -31,6 +32,7 @@ import com.test.entity.Show;
 import com.test.feign.TestFeignClient;
 import com.test.service.AopTestService;
 import com.test.service.CommonService;
+import com.test.service.ElasticsearchService;
 import com.test.service.KafkaProducerService;
 import com.test.service.OperationFlowService;
 import com.test.service.OperationFlowServiceNew;
@@ -99,6 +101,9 @@ public class TestController {
 
     @Autowired
     private KafkaProducerService kafkaProducerService;
+
+    @Autowired
+    private ElasticsearchService elasticsearchService;
 
     @Autowired
     private ChainClient chainClient;
@@ -308,6 +313,19 @@ public class TestController {
     @GetMapping("/kafkaRest")
     public ResultDto kafkaRest() {
         kafkaProducerService.send();
+        return new ResultDto();
+    }
+
+    @GetMapping("/esTest")
+    public ResultDto esTest() {
+        String id = "vVDKBYIBZgKnzy1xUzcR";
+        ArticleEntity articleEntity = elasticsearchService.getById(id);
+        ArticleEntity articleEntity2 = new ArticleEntity();
+        articleEntity2.setName("fdjfj");
+        articleEntity2.setAge(1235L);
+        articleEntity2.setCourseName("jkooohhh");
+        articleEntity2.setNumber(473894L);
+        ArticleEntity articleEntity3 = elasticsearchService.save(articleEntity2);
         return new ResultDto();
     }
 

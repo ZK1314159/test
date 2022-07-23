@@ -10,6 +10,9 @@ management:
         include: '*'
 
 spring:
+  elasticsearch:
+    rest:
+      uris: 127.0.0.1:9200
   kafka:
     bootstrap-servers: 127.0.0.1:9092
     producer:
