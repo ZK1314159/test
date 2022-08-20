@@ -80,6 +80,6 @@ public class CommonServiceImpl implements CommonService {
     }
 
     public void testProperty() {
-        logger.info("info: " + propertyBeanConfig.getId() + " " + propertyBeanConfig.getName());
+        logger.info("info: " + "remote test" + propertyBeanConfig.getId() + " " + propertyBeanConfig.getName());
     }
 }
