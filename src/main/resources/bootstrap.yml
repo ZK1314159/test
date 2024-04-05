@@ -1,32 +1,32 @@
 spring:
   application:
     name: newtest
-  cloud:
-    nacos:
-      config:
-        server-addr: 127.0.0.1:8848
-        file-extension: yml
-        namespace: nacostest
-        group: nacostest
-        enabled: true
-        username: nacos
-        password: nacos
+#  cloud:
+#    nacos:
+#      config:
+#        server-addr: 127.0.0.1:8848
+#        file-extension: yml
+#        namespace: nacostest
+#        group: nacostest
+#        enabled: true
+#        username: nacos
+#        password: nacos
 
-dubbo:
-  application:
-    name: ${spring.application.name}  #服务名
-  protocol:
-    name: dubbo
-    port: -1
-    threads: 200  # dubbo服务端线程池大小，Dubbo的线程池是固定大小的
-  registry:
-    address: nacos://${spring.cloud.nacos.config.server-addr}/?username=${spring.cloud.nacos.config.username}&password=${spring.cloud.nacos.config.password} #注册中心地址，这里使用Nacos作为注册中心
-    parameters:
-      namespace: nacostest
-  consumer:
-    group: nacostest  # 消费者所属group
-    check: false   # 启动检查，若为true且启动时无可用服务则无法成功启动，这里设置为false为懒加载
-  provider:
-    group: nacostest  # 自己的DubboService注册的group
-  cloud:
-    subscribed-services: dubboprovider   # 订阅的服务，不配置则无法消费Service
+#dubbo:
+#  application:
+#    name: ${spring.application.name}  #服务名
+#  protocol:
+#    name: dubbo
+#    port: -1
+#    threads: 200  # dubbo服务端线程池大小，Dubbo的线程池是固定大小的
+#  registry:
+#    address: nacos://${spring.cloud.nacos.config.server-addr}/?username=${spring.cloud.nacos.config.username}&password=${spring.cloud.nacos.config.password} #注册中心地址，这里使用Nacos作为注册中心
+#    parameters:
+#      namespace: nacostest
+#  consumer:
+#    group: nacostest  # 消费者所属group
+#    check: false   # 启动检查，若为true且启动时无可用服务则无法成功启动，这里设置为false为懒加载
+#  provider:
+#    group: nacostest  # 自己的DubboService注册的group
+#  cloud:
+#    subscribed-services: dubboprovider   # 订阅的服务，不配置则无法消费Service

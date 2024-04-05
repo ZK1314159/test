@@ -1,16 +1,14 @@
 package com.test.impl;
 
-import java.util.HashMap;
-
+import com.test.service.KafkaProducerService;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import com.test.service.KafkaProducerService;
+import java.util.HashMap;
 
 /**
  * Description
@@ -21,7 +19,7 @@ import com.test.service.KafkaProducerService;
 @Component
 public class KafkaServiceImpl implements KafkaProducerService {
 
-    @Autowired
+//    @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override

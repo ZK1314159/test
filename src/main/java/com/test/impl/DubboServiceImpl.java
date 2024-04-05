@@ -1,10 +1,7 @@
 package com.test.impl;
 
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.springframework.stereotype.Service;
-
-import com.example.dubbo.service.DubboProvider;
 import com.test.service.DubboService;
+import org.springframework.stereotype.Service;
 
 /**
  * Description：<br>
@@ -15,11 +12,12 @@ import com.test.service.DubboService;
 @Service
 public class DubboServiceImpl implements DubboService {
 
-    @DubboReference
-    private DubboProvider provider;
+//    @DubboReference
+//    private DubboProvider provider;
 
     public String invokeProvider(String word) {
-        String result = provider.say(word);
-        return result;
+        return null;
+//        String result = provider.say(word);
+//        return result;
     }
 }

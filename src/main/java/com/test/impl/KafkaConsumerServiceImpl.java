@@ -1,11 +1,9 @@
 package com.test.impl;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
 import com.test.service.KafkaConsumerService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.stereotype.Component;
 
 /**
  * Description
@@ -17,7 +15,7 @@ import com.test.service.KafkaConsumerService;
 @Component
 public class KafkaConsumerServiceImpl implements KafkaConsumerService {
 
-    @KafkaListener(topics = "test2")
+//    @KafkaListener(topics = "test2")
     @Override
     public void processMessage(ConsumerRecord<String, String> records) {
         log.info("consumer-topic:" + records.topic());

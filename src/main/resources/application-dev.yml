@@ -10,23 +10,23 @@ management:
         include: '*'
 
 spring:
-  elasticsearch:
-    rest:
-      uris: 127.0.0.1:9200
-  kafka:
-    bootstrap-servers: 127.0.0.1:9092
-    producer:
-      retries: 3 #发送失败后重试次数
-      batch-size: 16785
-      buffer-memory: 33554432 #32M处理缓冲区
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: local #群组
-      enable-auto-commit: false
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      auto-offset-reset: latest
+#  elasticsearch:
+#    rest:
+#      uris: 127.0.0.1:9200
+#  kafka:
+#    bootstrap-servers: 127.0.0.1:9092
+#    producer:
+#      retries: 3 #发送失败后重试次数
+#      batch-size: 16785
+#      buffer-memory: 33554432 #32M处理缓冲区
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    consumer:
+#      group-id: local #群组
+#      enable-auto-commit: false
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      auto-offset-reset: latest
   redis:
     redisson:
       file: classpath:redisson.yml
@@ -49,22 +49,22 @@ spring:
         master:
           url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password: 1314
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
         slave:
           url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password: 1314
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
         backupMaster:
           url: jdbc:mysql://localhost:3306/slave?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password: 1314
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
         backupSlave:
           url: jdbc:mysql://localhost:3306/slave?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password: 1314
+          password:
           driver-class-name: com.mysql.cj.jdbc.Driver
       hikari:
         min-idle: 1 #最小连接数
@@ -88,6 +88,8 @@ test:
   user:
     id: 12
     name: zengkai
+  newdata: 123
+
 property:
   test:
     id: 1324
