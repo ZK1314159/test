@@ -1,18 +1,19 @@
 package com.test.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.test.config.YmlPropertyBeanConfig;
+import com.test.service.TestService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-import com.test.config.YmlPropertyBeanConfig;
-import com.test.service.TestService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description
@@ -21,6 +22,7 @@ import com.test.service.TestService;
  */
 @Slf4j
 @Service
+@EnableRetry
 public class TestServiceImpl implements TestService {
 
     @Autowired
@@ -82,5 +84,13 @@ public class TestServiceImpl implements TestService {
             System.out.println(MDC.get("UUID"));
         });
         thread.start();
+    }
+
+    @Retryable
+    public void retryTest(Integer count) {
+        if (count == 3) {
+            log.info("bad key");
+            throw new RuntimeException("bad count");
+        }
     }
 }

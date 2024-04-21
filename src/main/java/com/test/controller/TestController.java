@@ -1,48 +1,29 @@
 package com.test.controller;
 
-import java.util.List;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
+import com.test.config.NewKafka;
+import com.test.config.ShowConfig;
+import com.test.config.config_bean.NacosConfigBean;
+import com.test.entity.*;
+import com.test.feign.TestFeignClient;
+import com.test.service.*;
+import com.test.show.chain.ChainClient;
+import com.test.show.decorator.BackOperateFlowClient;
+import com.test.show.strategy.AbstractFlow;
+import com.test.show.strategy.FlowClient;
+import com.test.show.strategy.OperateType;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import com.test.config.NewKafka;
-import com.test.config.ShowConfig;
-import com.test.config.config_bean.NacosConfigBean;
-import com.test.entity.ArticleEntity;
-import com.test.entity.FrontPostTest;
-import com.test.entity.FrontTestDTO;
-import com.test.entity.PostRequestDto;
-import com.test.entity.ResultDto;
-import com.test.entity.Show;
-import com.test.feign.TestFeignClient;
-import com.test.service.AopTestService;
-import com.test.service.CommonService;
-import com.test.service.ElasticsearchService;
-import com.test.service.KafkaProducerService;
-import com.test.service.OperationFlowService;
-import com.test.service.OperationFlowServiceNew;
-import com.test.service.ScheduleTaskService;
-import com.test.service.TestService;
-import com.test.show.chain.ChainClient;
-import com.test.show.decorator.BackOperateFlowClient;
-import com.test.show.strategy.AbstractFlow;
-import com.test.show.strategy.FlowClient;
-import com.test.show.strategy.OperateType;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.util.List;
 
 /**
  * Description
@@ -327,6 +308,12 @@ public class TestController {
         articleEntity2.setNumber(473894L);
         ArticleEntity articleEntity3 = elasticsearchService.save(articleEntity2);
         return new ResultDto();
+    }
+
+    @GetMapping("/retryTest")
+    public String retryTest() {
+        testService.retryTest(3);
+        return "success";
     }
 
 }

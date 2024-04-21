@@ -13,4 +13,7 @@ public interface TestService {
      * 测试nacos
      */
     void nacosTest();
+
+
+    public void retryTest(Integer count);
 }
