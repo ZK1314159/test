@@ -10,7 +10,9 @@ management:
         include: '*'
 
 spring:
-#  elasticsearch:
+  cache:
+    type: redis
+  #  elasticsearch:
 #    rest:
 #      uris: 127.0.0.1:9200
 #  kafka:

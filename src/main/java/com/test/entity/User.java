@@ -1,12 +1,10 @@
 package com.test.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
 public class User implements Serializable {
 
     private Integer userId;

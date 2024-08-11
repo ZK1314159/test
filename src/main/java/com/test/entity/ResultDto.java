@@ -1,8 +1,11 @@
 package com.test.entity;
 
-import java.io.Serializable;
-
 import com.test.controller.TestController;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * Description：result <br>
@@ -12,15 +15,9 @@ import com.test.controller.TestController;
  * @see TestController#logTest()
  * CreateDate：2020/3/16 14:34 <br>
  */
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class ResultDto implements Serializable {
-
     private String result = "success";
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
 }
