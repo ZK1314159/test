@@ -1,7 +1,7 @@
 package com.test.controller;
 
 import com.test.entity.ResultDto;
-import com.test.service.UserService;
+import com.test.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;

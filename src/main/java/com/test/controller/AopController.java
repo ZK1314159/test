@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.test.entity.ResultDto;
-import com.test.service.CommonService;
-import com.test.service.IntroductionInterceptorService;
+import com.test.service.interfaces.CommonService;
+import com.test.service.interfaces.IntroductionInterceptorService;
 
 /**
  * Description：<br>

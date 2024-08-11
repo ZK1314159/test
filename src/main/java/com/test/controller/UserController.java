@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.entity.ResultDto;
 import com.test.entity.User;
-import com.test.service.UserService;
+import com.test.service.interfaces.UserService;
 
 @Controller
 @RequestMapping(value = "/user")

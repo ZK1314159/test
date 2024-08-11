@@ -1,7 +1,7 @@
 package com.test.controller;
 
 import com.test.entity.ResultDto;
-import com.test.service.RedisService;
+import com.test.service.interfaces.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
