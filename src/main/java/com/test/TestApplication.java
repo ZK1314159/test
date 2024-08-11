@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContextAware;
 
 @SpringBootApplication
 @Slf4j
-@EnableFeignClients("com.test.feign")
+@EnableFeignClients("com.test.remote.feign")
 @EnableDubbo
 @EnableCaching
 //@ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
