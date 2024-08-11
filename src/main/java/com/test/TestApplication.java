@@ -1,19 +1,20 @@
 package com.test;
 
+import com.test.controller.TestController;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import lombok.extern.slf4j.Slf4j;
-import com.test.controller.TestController;
 
 @SpringBootApplication
 @Slf4j
 @EnableFeignClients("com.test.feign")
 @EnableDubbo
+@EnableCaching
 //@ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
 //        value = NewKafka.class))
 public class TestApplication implements ApplicationContextAware {
