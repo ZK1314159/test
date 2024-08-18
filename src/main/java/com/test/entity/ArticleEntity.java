@@ -1,9 +1,7 @@
 package com.test.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 /**
  * Description
@@ -12,7 +10,7 @@ import lombok.Data;
  * Date: 2022/7/23 17:06
  */
 @Data
-@Document(indexName = "test")
+//@Document(indexName = "test")
 public class ArticleEntity {
 
     @Id
