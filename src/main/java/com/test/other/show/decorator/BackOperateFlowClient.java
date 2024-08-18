@@ -10,7 +10,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.test.config.ShowConfig;
+import com.test.config.config_bean.ShowConfig;
 import com.test.entity.Show;
 
 /**

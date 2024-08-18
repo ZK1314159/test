@@ -1,4 +1,4 @@
-package com.test.config;
+package com.test.config.config_bean;
 
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;

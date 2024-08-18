@@ -1,6 +1,6 @@
 package com.test.service.interfaces;
 
-import com.test.config.ShowConfig;
+import com.test.config.config_bean.ShowConfig;
 import com.test.entity.Show;
 
 /**

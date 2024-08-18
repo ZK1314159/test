@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import com.test.config.ShowConfigNew;
+import com.test.config.config_bean.ShowConfigNew;
 import com.test.entity.Show;
 import com.test.service.interfaces.OperationFlowServiceNew;
 

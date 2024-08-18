@@ -11,7 +11,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import com.test.config.ShowConfig;
+import com.test.config.config_bean.ShowConfig;
 import com.test.config.annotatin.FieldOrder;
 import com.test.entity.Show;
 import com.test.service.interfaces.OperationFlowService;

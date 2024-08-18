@@ -1,6 +1,6 @@
 package com.test.service.impl;
 
-import com.test.config.YmlPropertyBeanConfig;
+import com.test.config.config_bean.YmlPropertyBeanConfig;
 import com.test.service.interfaces.TestService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;

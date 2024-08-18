@@ -2,7 +2,7 @@ package com.test.service.impl;
 
 import com.myhexin.zixun.config.User;
 import com.myhexin.zixun.config.UserService;
-import com.test.config.PropertyBeanConfig;
+import com.test.config.config_bean.PropertyBeanConfig;
 import com.test.service.interfaces.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

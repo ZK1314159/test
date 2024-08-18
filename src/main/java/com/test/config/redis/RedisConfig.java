@@ -1,4 +1,4 @@
-package com.test.config;
+package com.test.config.redis;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;

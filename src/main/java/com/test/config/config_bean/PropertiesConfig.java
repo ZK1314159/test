@@ -1,4 +1,4 @@
-package com.test.config;
+package com.test.config.config_bean;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

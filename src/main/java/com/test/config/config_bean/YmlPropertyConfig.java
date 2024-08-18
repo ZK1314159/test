@@ -1,4 +1,4 @@
-package com.test.config;
+package com.test.config.config_bean;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;

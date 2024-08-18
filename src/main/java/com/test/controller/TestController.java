@@ -1,7 +1,7 @@
 package com.test.controller;
 
-import com.test.config.NewKafka;
-import com.test.config.ShowConfig;
+import com.test.config.config_bean.NewKafka;
+import com.test.config.config_bean.ShowConfig;
 import com.test.config.config_bean.NacosConfigBean;
 import com.test.entity.*;
 import com.test.remote.feign.TestFeignClient;
