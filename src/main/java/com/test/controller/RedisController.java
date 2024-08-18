@@ -1,12 +1,11 @@
 package com.test.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.test.entity.Course;
 import com.test.entity.ResultDto;
 import com.test.service.interfaces.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Description
@@ -32,4 +31,19 @@ public class RedisController {
         redisService.set(key, value);
         return new ResultDto();
     }
+
+    @GetMapping("/setCourse")
+    public ResultDto setCourse(@RequestParam String key, @RequestParam String value) {
+        Course course = JSON.parseObject(value, Course.class);
+        redisService.setCourse(key, course);
+        return new ResultDto();
+    }
+
+    @GetMapping("/getCourse")
+    public ResultDto getCourse(@RequestParam String key) {
+        Course course = redisService.getCourse(key);
+        String result = JSON.toJSONString(course);
+        return new ResultDto(result);
+    }
+
 }

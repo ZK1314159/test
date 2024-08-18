@@ -1,5 +1,7 @@
 package com.test.service.interfaces;
 
+import com.test.entity.Course;
+
 /**
  * Description
  *
@@ -17,5 +19,9 @@ public interface RedisService {
     void stringSet(String key, String value);
 
     String stringGet(String key);
+
+    void setCourse(String key, Course value);
+
+    Course getCourse(String key);
 
 }

@@ -11,7 +11,7 @@ management:
 
 spring:
   cache:
-    type: caffeine
+    type: redis
   #  elasticsearch:
 #    rest:
 #      uris: 127.0.0.1:9200
@@ -32,17 +32,17 @@ spring:
   redis:
     redisson:
       file: classpath:redisson.yml
-    #Redis数据库索引（默认0）
-    database: 0
-    #Redis服务器地址（默认localhost）
-    host: 127.0.0.1
-    #Redis服务器连接端口号（默认6379）
-    port: 6379
-    #Redis服务器连接密码（默认为空）
-    password: 123456
-    lettuce:
-      pool:
-        max-idle: 8
+#    #Redis数据库索引（默认0）
+#    database: 0
+#    #Redis服务器地址（默认localhost）
+#    host: 127.0.0.1
+#    #Redis服务器连接端口号（默认6379）
+#    port: 6379
+#    #Redis服务器连接密码（默认为空）
+#    password: 123456
+#    lettuce:
+#      pool:
+#        max-idle: 8
   datasource:
     dynamic:
       primary: master

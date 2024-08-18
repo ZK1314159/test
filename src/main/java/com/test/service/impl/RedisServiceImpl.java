@@ -1,7 +1,8 @@
 package com.test.service.impl;
 
-import java.time.Duration;
-
+import com.test.entity.Course;
+import com.test.service.interfaces.RedisService;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-import com.test.service.interfaces.RedisService;
+import java.time.Duration;
 
 /**
  * Description
@@ -70,6 +70,16 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public String stringGet(String key) {
         return stringRedisTemplate.opsForValue().get(key);
+    }
+
+    @Override
+    public void setCourse(String key, Course value) {
+        redisTemplate.opsForValue().set(key, value);
+    }
+
+    @Override
+    public Course getCourse(String key) {
+        return (Course) redisTemplate.opsForValue().get(key);
     }
 
 }
