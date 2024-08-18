@@ -1,7 +1,10 @@
 package com.test.config.redis;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -13,11 +16,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * Description：RedisTemplate配置
  *
@@ -27,10 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class RedisConfig {
 
-    //读取pool配置
     @Bean
-    public GenericObjectPoolConfig poolConfig() {
-        GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+    public GenericObjectPoolConfig<?> poolConfig() {
+        GenericObjectPoolConfig<?> config = new GenericObjectPoolConfig<>();
         config.setMinIdle(10);
         config.setMaxIdle(20);
         config.setMaxTotal(100);
@@ -38,13 +35,9 @@ public class RedisConfig {
         return config;
     }
 
-    /**
-     * @date 2021/3/19 17:29
-     */
     @Bean
     public RedisStandaloneConfiguration configuration() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
-        //设置Database存储位置(0-15)
         redisConfig.setDatabase(0);
         redisConfig.setPassword("123456");
         redisConfig.setHostName("127.0.0.1");
@@ -52,24 +45,18 @@ public class RedisConfig {
         return redisConfig;
     }
 
-    @Bean("lettuceConnectionFactory")
-    public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("poolConfig") GenericObjectPoolConfig config,
-                                                             @Qualifier("configuration") RedisStandaloneConfiguration redisConfig) {
-        //注意传入的对象名和类型RedisStandaloneConfiguration
+    @Bean
+    public LettuceConnectionFactory lettuceConnectionFactory(GenericObjectPoolConfig<?> config,
+                                                             RedisStandaloneConfiguration redisConfig) {
         LettuceClientConfiguration clientConfiguration = LettucePoolingClientConfiguration.builder().poolConfig(config).build();
         return new LettuceConnectionFactory(redisConfig, clientConfiguration);
     }
 
-    /**
-     * RedisTemplate配置
-     */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory redisConnectionFactory) {
-
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory redisConnectionFactory) {
         //配置redisTemplate
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-
         //RedisSerializer
         RedisSerializer<?> stringSerializer = new StringRedisSerializer();
         //设置Jackson2JsonRedisSerializer序列化, 替换默认的jdk的序列化
