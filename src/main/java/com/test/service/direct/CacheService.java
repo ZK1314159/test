@@ -13,13 +13,13 @@ public class CacheService {
   @Autowired
   private CourseMapper courseMapper;
 
-  @Cacheable(value = "course", key = "#number")
+  @Cacheable(value = "course", keyGenerator = "myKeyGenerator")
   public Course getCourse(Integer number) {
     System.out.println("get cache");
     return courseMapper.getCourse(number);
   }
 
-  @CacheEvict(value = "course", key = "#number")
+  @CacheEvict(value = "course", keyGenerator = "myKeyGenerator")
   public void updateCourse(Integer number, String courseName) {
     System.out.println("update cache");
     courseMapper.updateCourse(number, courseName);
