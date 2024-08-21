@@ -3,7 +3,7 @@ package com.test.entity;
 import lombok.Data;
 
 @Data
-public class Course implements java.io.Serializable {
+public class Course {
     private Integer number;
     private String courseName;
 }
