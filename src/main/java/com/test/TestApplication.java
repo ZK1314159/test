@@ -9,12 +9,14 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @Slf4j
 @EnableFeignClients("com.test.remote.feign")
 @EnableDubbo
 @EnableCaching
+@EnableAspectJAutoProxy
 //@ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
 //        value = NewKafka.class))
 public class TestApplication implements ApplicationContextAware {
