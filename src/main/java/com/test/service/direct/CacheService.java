@@ -2,16 +2,19 @@ package com.test.service.direct;
 
 import com.test.entity.Course;
 import com.test.repository.mysql.CourseMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
+@Data
 public class CacheService {
 
-  @Autowired
   private CourseMapper courseMapper;
+
+  public CacheService(CourseMapper courseMapper) {
+    this.courseMapper = courseMapper;
+  }
 
   @Cacheable(value = "course", keyGenerator = "myKeyGenerator")
   public Course getCourse(Integer number) {
