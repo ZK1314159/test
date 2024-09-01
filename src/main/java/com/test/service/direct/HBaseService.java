@@ -537,6 +537,36 @@ public class HBaseService {
   }
 
   /**
+   * 为表批量添加 or 更新数据
+   * @since 1.0.0
+   * @param tableName 表名
+   * @param familyName 列族名
+   * @param data 数据
+   */
+  @SneakyThrows
+  public void batchPutOrUpdateTableData(String tableName, String familyName, com.google.common.collect.Table<String, String, String> data) {
+    Table table = getTable(tableName);
+    if (data.isEmpty()) {
+      log.error("data should not be null or empty");
+      return;
+    }
+    List<Put> puts = new ArrayList<>();
+    for (Map.Entry<String, Map<String, String>> entry : data.rowMap().entrySet()) {
+      Put put = new Put(Bytes.toBytes(entry.getKey()));
+      for (Map.Entry<String, String> column : entry.getValue().entrySet()) {
+        put.addColumn(Bytes.toBytes(familyName), Bytes.toBytes(column.getKey()), Bytes.toBytes(column.getValue()));
+      }
+      puts.add(put);
+    }
+    try {
+      table.put(puts);
+      table.close();
+    } catch (Exception e) {
+      log.error(MessageFormat.format("为表添加 or 更新数据失败, tableName:{0}, familyName:{1}", tableName, familyName), e);
+    }
+  }
+
+  /**
    * 为表的某个单元格赋值
    * @since 1.0.0
    * @param tableName 表名
