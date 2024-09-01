@@ -152,10 +152,13 @@ public class TestController {
         return result;
     }
 
-    @RequestMapping(value = "/log", produces = "application/json", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/log")
+//    @ResponseStatus(HttpStatus.OK)
     public ResultDto logTest() {
         log.info("test log!");
+        String msg1 = "test1";
+        String msg2 = "test2";
+        log.error("test log! msg1={}, msg2={}", msg1, msg2, new RuntimeException("test exception"));
         ResultDto result = new ResultDto();
         return result;
     }
