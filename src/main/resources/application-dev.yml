@@ -2,12 +2,10 @@
 server:
   port: 9000
 
-#endpoints，查看spring容器信息
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+hbase:
+  zookeeper:
+    quorum: localhost
+    port: 2181
 
 spring:
   cache:
@@ -169,3 +167,10 @@ threadpool:
   maxPoolSize: 6
   queueCapacity: 4
   keepAliveSeconds: 300
+
+#endpoints，查看spring容器信息
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
