@@ -144,8 +144,8 @@ hystrix:
 mykafka:
   #post送审
   postscan:
-    bootstrap-servers: 10.200.0.101:9092,10.200.0.237:9092,10.200.0.193:9092
-    topic: sns_postscan
+    bootstrap-servers: 127.0.0.1:9092
+    topic: test
     producer:
       retries: 3 #发送失败后重试次数
       batch-size: 16785
@@ -156,8 +156,8 @@ mykafka:
       loginModule: org.apache.kafka.common.security.scram.ScramLoginModule
       controlFlag: required
       options:
-        username: sns
-        password: 10jqkasns_%^&
+        username: user
+        password: 123456
     properties:
       sasl_mechanism: SCRAM-SHA-256
     security.protocol: SASL_PLAINTEXT
