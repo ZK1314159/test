@@ -29,11 +29,11 @@ public class HBaseService {
   public HBaseService(Configuration conf) {
 
     this.conf = conf;
-    try {
-      connection = ConnectionFactory.createConnection(conf);
-    } catch (IOException e) {
-      log.error("获取HBase连接失败");
-    }
+//    try {
+//      connection = ConnectionFactory.createConnection(conf);
+//    } catch (IOException e) {
+//      log.error("获取HBase连接失败");
+//    }
   }
 
   /**
