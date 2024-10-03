@@ -1,4 +1,4 @@
-package com.test.service.impl;
+package com.test.service.direct;
 
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableRetry
-public class TestService {
+public class TestRetryService {
 
   @Retryable
   public void test(Integer count) {

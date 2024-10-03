@@ -46,6 +46,7 @@ public class TestController {
     private CommonService commonService;
 
     @Autowired
+    @Qualifier("testServiceImpl")
     private TestService testService;
 
     @Autowired
