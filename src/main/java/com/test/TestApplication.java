@@ -1,15 +1,20 @@
 package com.test;
 
-import com.test.controller.TestController;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @Slf4j
@@ -30,21 +35,25 @@ public class TestApplication implements ApplicationContextAware {
 
     public static void main(String[] args) {
         SpringApplication.run(TestApplication.class, args);
-        TestController testController = applicationContext.getBean("testController", TestController.class);
-        log.info("4238ruir" + testController);
-//        AnnotationConfigServletWebServerApplicationContext annotationConfigServletWebApplicationContext =
-//                (AnnotationConfigServletWebServerApplicationContext) applicationContext;
-//        DefaultListableBeanFactory defaultListableBeanFactory =
-//                (DefaultListableBeanFactory) annotationConfigServletWebApplicationContext.getBeanFactory();
-//        ConcurrentHashMap<String, Object> singletonObjects =
-//                (ConcurrentHashMap<String, Object>) defaultListableBeanFactory.getSingletonMutex();
-//        Map<String, Object> aimMap = new HashMap<>();
-//        for (Map.Entry<String, Object> entry : singletonObjects.entrySet()) {
-//            String beanName = entry.getKey();
-//            if (beanName.contains("myProcessor")) {
-//                aimMap.put(entry.getKey(), entry.getValue());
-//            }
-//        }
+        testSingleBeanPool();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void testSingleBeanPool() {
+        AnnotationConfigServletWebServerApplicationContext annotationConfigServletWebApplicationContext =
+                (AnnotationConfigServletWebServerApplicationContext) applicationContext;
+        DefaultListableBeanFactory defaultListableBeanFactory =
+                (DefaultListableBeanFactory) annotationConfigServletWebApplicationContext.getBeanFactory();
+        ConcurrentHashMap<String, Object> singletonObjects =
+                (ConcurrentHashMap<String, Object>) defaultListableBeanFactory.getSingletonMutex();
+        Map<String, Object> aimMap = new HashMap<>();
+        for (Map.Entry<String, Object> entry : singletonObjects.entrySet()) {
+            String beanName = entry.getKey();
+            if (beanName.contains("beanTestService")) {
+                aimMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        log.info("aimMap keyset: " + aimMap.keySet());
     }
 
 }
