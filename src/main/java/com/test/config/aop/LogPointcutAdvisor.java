@@ -16,11 +16,11 @@ public class LogPointcutAdvisor extends StaticMethodMatcherPointcutAdvisor {
   @Override
   public boolean matches(Method method, Class<?> targetClass) {
     log.info("targetClass: " + targetClass.getName() + ", method: " + method.getName());
-    if(!targetClass.getName().equals("com.test.service.impl.RedisServiceImpl")) {
+    if(!targetClass.getName().equals("com.test.service.direct.AopDirectTestService")) {
       return false;
     }
     // 这里可以添加逻辑来匹配你想要的方法，例如：
-    return "set".equals(method.getName());
+    return "test".equals(method.getName());
   }
 
 }
