@@ -32,7 +32,7 @@ public class DeepSeekClient {
     private final String apiKey;
 
     @Autowired
-    public DeepSeekClient(RestTemplateBuilder builder, @Value("${DEEPSEEK_API_KEY:}") String apiKey) {
+    public DeepSeekClient(RestTemplateBuilder builder, @Value("${deepseek.api-key:}") String apiKey) {
         this(builder.setConnectTimeout(Duration.ofSeconds(10))
                 .setReadTimeout(Duration.ofSeconds(120)).build(), apiKey);
     }
@@ -44,7 +44,7 @@ public class DeepSeekClient {
 
     public String complete(String prompt) {
         if (apiKey == null || apiKey.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "未配置 DEEPSEEK_API_KEY");
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "未配置 deepseek.api-key");
         }
 
         Map<String, String> message = new LinkedHashMap<>();

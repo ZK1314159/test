@@ -2,6 +2,9 @@
 server:
   port: 9000
 
+deepseek:
+  api-key: sk-dca69ed7036c43aaaf9cddefc9e538b0
+
 hbase:
   zookeeper:
     quorum: localhost
