@@ -30,17 +30,17 @@ spring:
   redis:
     redisson:
       file: classpath:redisson.yml
-#    #Redis数据库索引（默认0）
-#    database: 0
-#    #Redis服务器地址（默认localhost）
-#    host: 127.0.0.1
-#    #Redis服务器连接端口号（默认6379）
-#    port: 6379
-#    #Redis服务器连接密码（默认为空）
-#    password: 123456
-#    lettuce:
-#      pool:
-#        max-idle: 8
+    #Redis数据库索引（默认0）
+    database: 0
+    #Redis服务器地址（默认localhost）
+    host: 127.0.0.1
+    #Redis服务器连接端口号（默认6379）
+    port: 6379
+    #Redis服务器连接密码（默认为空）
+    password: 123456
+    lettuce:
+      pool:
+        max-idle: 8
   datasource:
     dynamic:
       primary: master
@@ -49,22 +49,22 @@ spring:
         master:
           url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password:
+          password: 12345678
           driver-class-name: com.mysql.cj.jdbc.Driver
         slave:
           url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password:
+          password: 12345678
           driver-class-name: com.mysql.cj.jdbc.Driver
         backupMaster:
           url: jdbc:mysql://localhost:3306/slave?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password:
+          password: 12345678
           driver-class-name: com.mysql.cj.jdbc.Driver
         backupSlave:
           url: jdbc:mysql://localhost:3306/slave?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
           username: root
-          password:
+          password: 12345678
           driver-class-name: com.mysql.cj.jdbc.Driver
       hikari:
         min-idle: 1 #最小连接数
