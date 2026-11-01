@@ -1,6 +1,6 @@
 package com.test.controller;
 
-import com.test.service.direct.DeepSeekClient;
+import com.test.service.direct.AiClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,12 +12,12 @@ import java.util.Collections;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/deepseek")
-public class DeepSeekController {
+@RequestMapping("/ai")
+public class AiController {
 
-    private final DeepSeekClient client;
+    private final AiClient client;
 
-    public DeepSeekController(DeepSeekClient client) {
+    public AiController(AiClient client) {
         this.client = client;
     }
 

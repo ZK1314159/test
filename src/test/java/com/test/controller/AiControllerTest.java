@@ -1,6 +1,6 @@
 package com.test.controller;
 
-import com.test.service.direct.DeepSeekClient;
+import com.test.service.direct.AiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,15 +14,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class DeepSeekControllerTest {
+class AiControllerTest {
 
     @Test
     void returnsModelResult() throws Exception {
-        DeepSeekClient client = mock(DeepSeekClient.class);
+        AiClient client = mock(AiClient.class);
         when(client.complete("你好")).thenReturn("你好！");
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(new DeepSeekController(client)).build();
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new AiController(client)).build();
 
-        mvc.perform(post("/deepseek/chat").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/ai/chat").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"prompt\":\"你好\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result").value("你好！"));
@@ -31,10 +31,10 @@ class DeepSeekControllerTest {
 
     @Test
     void rejectsBlankPrompt() throws Exception {
-        DeepSeekClient client = mock(DeepSeekClient.class);
-        MockMvc mvc = MockMvcBuilders.standaloneSetup(new DeepSeekController(client)).build();
+        AiClient client = mock(AiClient.class);
+        MockMvc mvc = MockMvcBuilders.standaloneSetup(new AiController(client)).build();
 
-        mvc.perform(post("/deepseek/chat").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/ai/chat").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"prompt\":\"   \"}"))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(client);
