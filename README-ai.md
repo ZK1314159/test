@@ -10,7 +10,7 @@
 | 环境变量 | 用途 | 开发环境默认值 |
 | --- | --- | --- |
 | `AI_PROVIDER` | `deepseek` 或 `codex` | `codex` |
-| `CODEX_MODEL` | Codex 模型名，对应 `ai.codex.model` | `gpt-6.1-sol` |
+| `CODEX_MODEL` | Codex 模型名，对应 `ai.codex.model` | `gpt-6-luna` |
 | `DEEPSEEK_MODEL` | DeepSeek 模型名，对应 `ai.deepseek.model` | `deepseek-flash` |
 | `OPENAI_API_KEY` | Codex/OpenAI 密钥 | 无 |
 | `DEEPSEEK_API_KEY` | DeepSeek 密钥 | 无 |

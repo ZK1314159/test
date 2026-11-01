@@ -1,6 +1,8 @@
 <configuration>
     <!-- 真实 API 测试禁止输出 HTTP 请求头及报文，避免泄露 Authorization。 -->
     <logger name="org.apache.http" level="WARN"/>
+    <!-- 此客户端的 Cookie 解析 WARN 会包含 Set-Cookie 原文，禁止写入教学调用日志。 -->
+    <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>

@@ -8,7 +8,7 @@ ai:
   deepseek:
     model: ${DEEPSEEK_MODEL:deepseek-flash}
   codex:
-    model: ${CODEX_MODEL:gpt-6.1-sol}
+    model: ${CODEX_MODEL:gpt-6-luna}
 
 hbase:
   zookeeper:

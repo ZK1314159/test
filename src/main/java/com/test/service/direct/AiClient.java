@@ -1,6 +1,7 @@
 package com.test.service.direct;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -38,14 +40,14 @@ public class AiClient {
                     @Value("${DEEPSEEK_API_KEY:}") String deepseekApiKey,
                     @Value("${ai.deepseek.model:deepseek-flash}") String deepseekModel,
                     @Value("${OPENAI_API_KEY:}") String openaiApiKey,
-                    @Value("${ai.codex.model:gpt-6.1-sol}") String codexModel) {
+                    @Value("${ai.codex.model:gpt-6-luna}") String codexModel) {
         this(builder.setConnectTimeout(Duration.ofSeconds(10))
                 .setReadTimeout(Duration.ofSeconds(120)).build(), provider,
                 deepseekApiKey, deepseekModel, openaiApiKey, codexModel);
     }
 
     AiClient(RestTemplate restTemplate, String apiKey) {
-        this(restTemplate, "deepseek", apiKey, "deepseek-flash", "", "gpt-6.1-sol");
+        this(restTemplate, "deepseek", apiKey, "deepseek-flash", "", "gpt-6-luna");
     }
 
     AiClient(RestTemplate restTemplate, String provider, String deepseekApiKey, String deepseekModel,
@@ -104,6 +106,62 @@ public class AiClient {
         } catch (RestClientException e) {
             log.error("调用 AI API 失败，provider={}，model={}", provider, model, e);
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, provider + " 请求失败", e);
+        }
+    }
+
+    /** 第三课：保留工具调用等结构化输出；现有 complete(String) 的行为不变。 */
+    public JsonNode respond(String instructions, ArrayNode input, ArrayNode tools,
+                            Consumer<Map<String, Object>> recorder) {
+        if (!"codex".equals(provider)) {
+            throw new IllegalStateException("第三课工具循环仅实现 codex/Responses，请显式选择该提供方");
+        }
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "未配置 OPENAI_API_KEY");
+        }
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("model", model);
+        body.put("instructions", instructions);
+        body.put("input", input);
+        body.put("tools", tools);
+        body.put("tool_choice", "auto");
+        body.put("parallel_tool_calls", false);
+        body.put("store", false);
+        body.put("stream", false);
+        // 不依赖服务端保存对话；若模型返回推理状态，下一轮随 output 一起续传。
+        body.put("include", Collections.singletonList("reasoning.encrypted_content"));
+
+        Map<String, Object> requestEvent = new LinkedHashMap<>();
+        requestEvent.put("kind", "model_request");
+        requestEvent.put("method", "POST");
+        requestEvent.put("url", apiUrl);
+        requestEvent.put("body", body);
+        recorder.accept(requestEvent);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.POST,
+                    new HttpEntity<>(body, headers), JsonNode.class);
+            Map<String, Object> responseEvent = new LinkedHashMap<>();
+            responseEvent.put("kind", "model_response");
+            responseEvent.put("httpStatus", response.getStatusCodeValue());
+            responseEvent.put("requestId", response.getHeaders().getFirst("x-request-id"));
+            responseEvent.put("body", response.getBody());
+            recorder.accept(responseEvent);
+            JsonNode result = response.getBody();
+            if (result == null || !"completed".equals(result.path("status").asText())
+                    || !result.path("output").isArray()) {
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "工具调用未返回完整 output");
+            }
+            return result;
+        } catch (RestClientException e) {
+            Map<String, Object> error = new LinkedHashMap<>();
+            error.put("kind", "model_error");
+            error.put("exceptionType", e.getClass().getName());
+            recorder.accept(error);
+            log.error("调用 Agent 模型失败，provider={}，model={}", provider, model, e);
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Agent 模型请求失败", e);
         }
     }
 

@@ -1,0 +1,57 @@
+第三课：本次真实运行概览
+
+来源：同目录 call-details.json，运行时直接记录，不是重建。
+
+第 1 轮模型请求
+发送时间：2026-11-01T17:25:32.658+08:00
+收到响应时间：2026-11-01T17:25:35.310+08:00
+HTTP 状态：200
+请求模型：gpt-6-luna
+返回模型：gpt-6-luna
+response id：resp_054c545082569f92016ae7058d875c87d2b29c6fbc7f7881dd
+x-request-id：req_3af2b57089d74891b732bf4d8de53986
+输入项数：1
+服务端返回的 Token 用量：{"input_tokens": 475, "input_tokens_details": {"cache_write_tokens": 0, "cached_tokens": 0}, "output_tokens": 45, "output_tokens_details": {"reasoning_tokens": 0}, "total_tokens": 520}
+模型选择工具：query_conversion_summary
+模型给出的参数：{"start":"2026-11-01T15:00:00","end":"2026-11-01T16:00:00"}
+工具实际返回：{"start": "2026-11-01T15:00", "end": "2026-11-01T16:00", "timeBasis": "created_at", "total": 100, "success": 80, "failed": 10, "initialized": 5, "processing": 5, "unknown": 0, "successRate": 0.8}
+
+第 2 轮模型请求
+发送时间：2026-11-01T17:25:35.346+08:00
+收到响应时间：2026-11-01T17:25:36.836+08:00
+HTTP 状态：200
+请求模型：gpt-6-luna
+返回模型：gpt-6-luna
+response id：resp_054c545082569f92016ae7058f8d9887d28030dfed89e1811a
+x-request-id：req_0e94b49803c642f79ea2d74c2e194d9f
+输入项数：3
+服务端返回的 Token 用量：{"input_tokens": 596, "input_tokens_details": {"cache_write_tokens": 0, "cached_tokens": 0}, "output_tokens": 74, "output_tokens_details": {"reasoning_tokens": 27}, "total_tokens": 670}
+模型选择工具：query_conversion_summary
+模型给出的参数：{"start":"2026-11-01T14:00:00","end":"2026-11-01T15:00:00"}
+工具实际返回：{"start": "2026-11-01T14:00", "end": "2026-11-01T15:00", "timeBasis": "created_at", "total": 100, "success": 98, "failed": 2, "initialized": 0, "processing": 0, "unknown": 0, "successRate": 0.98}
+
+第 3 轮模型请求
+发送时间：2026-11-01T17:25:36.840+08:00
+收到响应时间：2026-11-01T17:25:41.614+08:00
+HTTP 状态：200
+请求模型：gpt-6-luna
+返回模型：gpt-6-luna
+response id：resp_054c545082569f92016ae70591093087d2b497140483f8f223
+x-request-id：req_280511b6d3dd4f9883d8a87f757a61b7
+输入项数：6
+服务端返回的 Token 用量：{"input_tokens": 746, "input_tokens_details": {"cache_write_tokens": 0, "cached_tokens": 0}, "output_tokens": 358, "output_tokens_details": {"reasoning_tokens": 86}, "total_tokens": 1104}
+
+最终分析
+**结论：**无法仅凭现有数据判定整体是否正常；但最近一小时相较上一小时，成功率明显下降、失败占比上升，值得进一步核查。
+
+**数据依据：**  
+- 15:00–16:00：共 100 条，成功 80 条、失败 10 条、初始化 5 条、处理中 5 条；成功率 0.80。  
+- 14:00–15:00：共 100 条，成功 98 条、失败 2 条；成功率 0.98。  
+- 成功率下降 18 个百分点，失败数从 2 增至 10。初始化和处理中不计为失败。
+
+**判断限制：**统计按 `created_at` 归组，反映查询时记录的当前状态，不是发送尝试次数；缺少业务阈值、历史同期、渠道及错误详情，不能据此断言整体异常或推断根因。这些数据是本地教学样例，不能代表生产状态。
+
+**建议查询：**进一步查看失败记录的错误详情与渠道分布，并结合业务阈值和历史同期数据判断；对初始化、处理中记录可在状态更新后复查。
+
+合计：3 次模型请求、2 次只读数据库工具执行。
+逐轮完整请求和响应见 call-details.txt / call-details.json。
