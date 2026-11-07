@@ -53,10 +53,11 @@ public class AgentTrace implements AutoCloseable {
         Files.createDirectories(directory);
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(document);
         Files.write(directory.resolve("call-details.json"), json.getBytes(StandardCharsets.UTF_8));
-        StringBuilder readable = new StringBuilder("第三课：真实 Agent 调用明细\n\n")
+        StringBuilder readable = new StringBuilder("回传分析 Agent 调用明细\n\n")
                 .append("运行时记录完整请求/响应 JSON、工具参数和结果；不包含认证请求头。\n")
                 .append("model_request 是发出的请求体；model_response 是收到的响应体及白名单元数据。\n")
-                .append("tool_result 是 Java 查询 MySQL 后交回模型的结果。agent_result 是最终输出。\n")
+                .append("mcp_tools_list 是服务端发现结果；mcp_tool_call 是 Agent 提交给 MCP Client 的调用。\n")
+                .append("tool_result 是查询后交回模型的证据。agent_result 是最终输出。\n")
                 .append("只有出现 agent_result 才表示循环正常完成；否则查看最后一轮事件与测试错误。\n")
                 .append("reasoning.encrypted_content 如存在，是用于续传的加密状态，并非可读思维过程。\n\n");
         for (com.fasterxml.jackson.databind.JsonNode event : document.withArray("events")) {

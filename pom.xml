@@ -20,10 +20,20 @@
         <spring-cloud.version>2021.0.9</spring-cloud.version>
         <dubbo.version>3.2.18</dubbo.version>
         <redisson.version>3.23.5</redisson.version>
+        <mcp.version>1.1.5</mcp.version>
+        <!-- MCP Jackson 2 适配器及 Reactor 与 SDK 使用的版本对齐。 -->
+        <jackson-bom.version>2.20.1</jackson-bom.version>
+        <reactor-bom.version>2024.0.0</reactor-bom.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Boot 2.7 的 SnakeYAML API 与新版 Jackson YAML 不兼容；保留原 YAML 适配器。 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>2.13.5</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -35,6 +45,16 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp-core</artifactId>
+            <version>${mcp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp-json-jackson2</artifactId>
+            <version>${mcp.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
@@ -259,6 +279,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- MCP 另有 main；默认应用入口仍明确指定。 -->
+                    <mainClass>com.test.TestApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

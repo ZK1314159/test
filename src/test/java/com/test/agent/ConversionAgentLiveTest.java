@@ -2,6 +2,7 @@ package com.test.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.service.direct.AiClient;
+import com.test.agent.mcp.ConversionMcpClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.boot.env.YamlPropertySourceLoader;
@@ -9,15 +10,11 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
@@ -43,28 +40,19 @@ class ConversionAgentLiveTest {
             context.registerBean(RestTemplateBuilder.class, () -> new RestTemplateBuilder());
             context.register(AiClient.class);
             context.refresh();
-            String prefix = "spring.datasource.dynamic.datasource.master.";
-            String user = env.getProperty("AGENT_MYSQL_USER", env.getRequiredProperty(prefix + "username"));
-            String password = env.getProperty("AGENT_MYSQL_PASSWORD", env.getRequiredProperty(prefix + "password"));
-            String url = "jdbc:mysql://127.0.0.1:3306/tdtracking?useSSL=false"
-                    + "&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai";
-            try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                connection.setReadOnly(true);
-                // 每条只读查询自行完成，不在等待模型期间持有数据库事务。
-                connection.setAutoCommit(true);
-                JdbcTemplate jdbc = new JdbcTemplate(new SingleConnectionDataSource(connection, true));
-                jdbc.setQueryTimeout(10);
-                assertEquals("tdtracking", jdbc.queryForObject("SELECT DATABASE()", String.class));
-                String configuredEnd = env.getProperty("AGENT_WINDOW_END");
-                LocalDateTime anchor = configuredEnd == null
-                        ? jdbc.queryForObject("SELECT NOW()", Timestamp.class).toLocalDateTime()
-                        : LocalDateTime.parse(configuredEnd);
+            String configuredEnd = env.getProperty("AGENT_WINDOW_END");
+            LocalDateTime anchor = configuredEnd == null
+                    ? LocalDateTime.now(ZoneId.of("Asia/Shanghai"))
+                    : LocalDateTime.parse(configuredEnd);
+            // Agent 不再持有数据库连接；子进程负责本机 MySQL 访问。
+            try (ConversionMcpClient mcp = ConversionMcpClient.startLocal(anchor)) {
                 String goal = "分析截至 " + anchor + " 最近一小时的回传是否正常，必要时与上一小时比较。"
                         + "请自行选择查询参数，说明证据和判断限制。";
-                Map<String, Object> result = new ConversionAgent(new ConversionUploadLogTool(jdbc),
+                Map<String, Object> result = new ConversionAgent(mcp,
                         context.getBean(AiClient.class), mapper).run(goal, anchor, trace);
                 assertTrue(((Number) result.get("toolCalls")).intValue() >= 1);
                 assertFalse(((String) result.get("analysis")).trim().isEmpty());
+                assertTrue(trace.document().path("events").findValuesAsText("kind").contains("mcp_tools_list"));
                 System.out.println("AGENT_LOOP_RESULT=" + mapper.writeValueAsString(result));
             }
         }

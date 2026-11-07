@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.test.service.direct.AiClient;
+import com.test.agent.mcp.ConversionMcpClient;
+import com.test.agent.mcp.ConversionMcpServer;
+import io.modelcontextprotocol.spec.McpSchema;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,13 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** 第三课：模型选择行动，Java 执行工具，再把观察结果交回模型。 */
+/** 模型选择行动，通过 stdio MCP 执行工具，再把观察结果交回模型。 */
 public class ConversionAgent {
-    private final ConversionUploadLogTool tool;
+    private final ConversionMcpClient tool;
     private final AiClient client;
     private final ObjectMapper mapper;
 
-    public ConversionAgent(ConversionUploadLogTool tool, AiClient client, ObjectMapper mapper) {
+    public ConversionAgent(ConversionMcpClient tool, AiClient client, ObjectMapper mapper) {
         this.tool = tool;
         this.client = client;
         this.mapper = mapper;
@@ -34,6 +37,10 @@ public class ConversionAgent {
         if (goal == null || goal.trim().isEmpty() || anchor == null) {
             throw new IllegalArgumentException("目标和时间锚点不能为空");
         }
+        // 每次分析通过 tools/list 发现能力；同一次循环复用经过白名单筛选的声明。
+        List<McpSchema.Tool> discovered = tool.listTools();
+        ArrayNode definitions = toolDefinitions(discovered);
+        trace.record(event("mcp_tools_list", "tools", discovered));
         // 1. 初始上下文只有任务，没有预先查询数据；工具参数由模型选择。
         ArrayNode input = mapper.createArrayNode();
         input.addObject().put("role", "user").put("content", goal);
@@ -53,7 +60,7 @@ public class ConversionAgent {
         // 2. 有界循环：最多四次模型请求、三次数据库工具执行，避免无止境调用。
         for (int round = 1; round <= 4; round++) {
             trace.record(event("agent_round", "round", round));
-            JsonNode response = client.respond(instructions, input.deepCopy(), toolDefinitions(), trace::record);
+            JsonNode response = client.respond(instructions, input.deepCopy(), definitions.deepCopy(), trace::record);
             JsonNode output = response.path("output");
             if (!output.isArray()) {
                 throw new IllegalStateException("模型 output 必须是数组");
@@ -97,6 +104,8 @@ public class ConversionAgent {
                         || Duration.between(start, end).compareTo(Duration.ofHours(1)) > 0) {
                     throw new IllegalArgumentException("工具时间范围超出授权窗口或超过一小时");
                 }
+                trace.record(event("mcp_tool_call", "request", Map.of(
+                        "callId", callId, "name", call.path("name").asText(), "arguments", args)));
                 Map<String, Object> summary = tool.querySummary(start, end);
                 executed++;
 
@@ -116,18 +125,28 @@ public class ConversionAgent {
         throw new IllegalStateException("模型循环已达到轮数限制");
     }
 
-    /** 工具声明是能力说明，真正的实现仍是第一课的 Java 方法。 */
-    private ArrayNode toolDefinitions() {
+    /** MCP inputSchema 转为模型 parameters；不把服务器的其他工具自动授权给模型。 */
+    private ArrayNode toolDefinitions(List<McpSchema.Tool> discovered) {
+        List<McpSchema.Tool> allowed = discovered.stream()
+                .filter(candidate -> ConversionMcpServer.TOOL_NAME.equals(candidate.name())).toList();
+        if (allowed.size() != 1) {
+            throw new IllegalStateException("MCP 必须提供唯一的 query_conversion_summary 工具");
+        }
+        McpSchema.Tool tool = allowed.get(0);
+        JsonNode schema = mapper.valueToTree(tool.inputSchema());
+        if (!"object".equals(schema.path("type").asText())
+                || !schema.path("additionalProperties").isBoolean() || schema.path("additionalProperties").asBoolean()
+                || !schema.path("properties").isObject() || schema.path("properties").size() != 2
+                || !"string".equals(schema.path("properties").path("start").path("type").asText())
+                || !"string".equals(schema.path("properties").path("end").path("type").asText())
+                || !schema.path("required").isArray() || schema.path("required").size() != 2
+                || !Set.of("start", "end").equals(mapper.convertValue(schema.path("required"), Set.class))) {
+            throw new IllegalStateException("MCP 统计工具的参数契约不兼容，停止调用");
+        }
         ArrayNode tools = mapper.createArrayNode();
         ObjectNode definition = tools.addObject().put("type", "function")
-                .put("name", "query_conversion_summary").put("strict", true)
-                .put("description", "只读查询指定时间窗口创建的回传记录的当前状态统计；每次至多一小时，可用于目标窗口或对比窗口。");
-        ObjectNode parameters = definition.putObject("parameters");
-        parameters.put("type", "object").put("additionalProperties", false);
-        ObjectNode properties = parameters.putObject("properties");
-        properties.putObject("start").put("type", "string").put("description", "开始时间，包含，ISO本地时间，如2026-11-01T15:00:00");
-        properties.putObject("end").put("type", "string").put("description", "结束时间，不包含，ISO本地时间，如2026-11-01T16:00:00");
-        parameters.putArray("required").add("start").add("end");
+                .put("name", tool.name()).put("strict", true).put("description", tool.description());
+        definition.set("parameters", schema);
         return tools;
     }
 

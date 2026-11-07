@@ -1,5 +1,8 @@
 # AI 对话接口
 
+回传分析 Agent 已通过 stdio MCP 发现和调用 MySQL 查询工具，详见
+[第四课：stdio MCP](docs/agent/lesson-04-mcp.md)。该入口与下方文本聊天接口独立。
+
 `POST /ai/chat` 接收 `{"prompt":"你好"}`，返回 `{"result":"模型回复"}`。
 原 `/deepseek/chat` 入口已更名为 `/ai/chat`。
 

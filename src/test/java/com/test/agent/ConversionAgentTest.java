@@ -5,6 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.test.service.direct.AiClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import com.test.agent.mcp.ConversionMcpClient;
+import com.test.agent.mcp.ConversionMcpServer;
+import io.modelcontextprotocol.spec.McpSchema;
+import java.util.List;
 import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDateTime;
@@ -18,8 +23,13 @@ import static org.mockito.Mockito.*;
 class ConversionAgentTest {
     private final ObjectMapper mapper = new ObjectMapper();
     private final AiClient client = mock(AiClient.class);
-    private final ConversionUploadLogTool tool = mock(ConversionUploadLogTool.class);
+    private final ConversionMcpClient tool = mock(ConversionMcpClient.class);
     private final LocalDateTime end = LocalDateTime.of(2026, 11, 1, 16, 0);
+
+    @BeforeEach
+    void discoverTool() {
+        when(tool.listTools()).thenReturn(List.of(ConversionMcpServer.toolDefinition()));
+    }
 
     @Test
     void modelChoosesTwoWindowsAndReceivesBothResultsWithMatchingCallIds() throws Exception {
@@ -33,12 +43,23 @@ class ConversionAgentTest {
         when(tool.querySummary(end.minusHours(1), end)).thenReturn(Collections.singletonMap("successRate", 0.8));
         when(tool.querySummary(end.minusHours(2), end.minusHours(1))).thenReturn(Collections.singletonMap("successRate", 0.98));
 
+        McpSchema.Tool discovered = McpSchema.Tool.builder()
+                .name("query_conversion_summary").description("来自 MCP tools/list 的描述")
+                .inputSchema(ConversionMcpServer.toolDefinition().inputSchema()).build();
+        when(tool.listTools()).thenReturn(List.of(discovered));
         AgentTrace trace = new AgentTrace(mapper);
         Map<String, Object> result = new ConversionAgent(tool, client, mapper).run("分析回传", end, trace);
 
         assertEquals(2, ((java.util.List<?>) result.get("observations")).size());
         ArgumentCaptor<ArrayNode> inputs = ArgumentCaptor.forClass(ArrayNode.class);
         verify(client, times(3)).respond(anyString(), inputs.capture(), any(ArrayNode.class), any());
+        ArgumentCaptor<ArrayNode> definitions = ArgumentCaptor.forClass(ArrayNode.class);
+        verify(client, times(3)).respond(anyString(), any(ArrayNode.class), definitions.capture(), any());
+        assertEquals("来自 MCP tools/list 的描述", definitions.getValue().get(0).path("description").asText());
+        assertEquals(mapper.valueToTree(discovered.inputSchema()),
+                definitions.getValue().get(0).path("parameters"));
+        verify(tool, times(1)).listTools();
+        assertEquals("mcp_tools_list", trace.document().path("events").get(0).path("kind").asText());
         ArrayNode last = inputs.getAllValues().get(2);
         assertEquals("opaque-test-state", last.get(1).path("encrypted_content").asText());
         assertEquals("call_current", last.get(3).path("call_id").asText());
@@ -54,7 +75,7 @@ class ConversionAgentTest {
                 .thenReturn(call("call_bad", "execute_sql", "2026-11-01T15:00:00", "2026-11-01T16:00:00"));
         assertThrows(IllegalArgumentException.class,
                 () -> new ConversionAgent(tool, client, mapper).run("分析", end, new AgentTrace(mapper)));
-        verifyNoInteractions(tool);
+        verify(tool, never()).querySummary(any(), any());
     }
 
     @Test
@@ -77,7 +98,7 @@ class ConversionAgentTest {
             assertThrows(Exception.class,
                     () -> new ConversionAgent(tool, client, mapper).run("分析", end, new AgentTrace(mapper)), argumentsJson);
         }
-        verifyNoInteractions(tool);
+        verify(tool, never()).querySummary(any(), any());
     }
 
     @Test
@@ -86,7 +107,7 @@ class ConversionAgentTest {
                 .thenReturn(answer("一切正常"));
         assertThrows(IllegalStateException.class,
                 () -> new ConversionAgent(tool, client, mapper).run("分析", end, new AgentTrace(mapper)));
-        verifyNoInteractions(tool);
+        verify(tool, never()).querySummary(any(), any());
     }
 
     @Test
@@ -124,6 +145,21 @@ class ConversionAgentTest {
         trace.record(Collections.singletonMap("input", input));
         input.add("later");
         assertEquals(1, trace.document().path("events").get(0).path("input").size());
+    }
+
+    @Test
+    void missingOrIncompatibleDiscoveredToolStopsBeforeModelRequest() {
+        when(tool.listTools()).thenReturn(List.of());
+        assertThrows(IllegalStateException.class,
+                () -> new ConversionAgent(tool, client, mapper).run("分析", end, new AgentTrace(mapper)));
+        var wrong = McpSchema.Tool.builder().name("query_conversion_summary")
+                .inputSchema(new McpSchema.JsonSchema("object", Map.of("sql", Map.of("type", "string")),
+                        List.of("sql"), false, null, null)).build();
+        when(tool.listTools()).thenReturn(List.of(wrong));
+        assertThrows(IllegalStateException.class,
+                () -> new ConversionAgent(tool, client, mapper).run("分析", end, new AgentTrace(mapper)));
+        verifyNoInteractions(client);
+        verify(tool, never()).querySummary(any(), any());
     }
 
     private JsonNode call(String id, String name, String start, String finish) throws Exception {
