@@ -1,3 +1,8 @@
 spring:
   profiles:
     active: dev
+
+dubbo:
+  application:
+    name: test
+    qos-enable: false

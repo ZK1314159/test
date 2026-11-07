@@ -1,6 +1,6 @@
 package com.test.remote.feign;
 
-import feign.hystrix.FallbackFactory;
+import org.springframework.cloud.openfeign.FallbackFactory;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +19,7 @@ public class TestFallbackFactory implements FallbackFactory<TestFeignClient> {
             public String test(@RequestParam Integer id) {
                 String msg = "[测试服务: TestFeignClient.test] 调用异常" + ", 异常原因: " + cause
                         + ", 入参为=> id: " + id ;
-                log.error(msg);
+                log.error(msg, cause);
                 return null;
             }
 
@@ -27,7 +27,7 @@ public class TestFallbackFactory implements FallbackFactory<TestFeignClient> {
             public PostRequestDto post(PostRequestDto postRequestDto) {
                 String msg = "[测试服务: TestFeignClient.post] 调用异常" + ", 异常原因: " + cause
                         + ", 入参为=> postRequestDto: " + postRequestDto ;
-                log.error(msg);
+                log.error(msg, cause);
                 return null;
             }
         };

@@ -1,3 +1,5 @@
+# 显式保留 3.14 的序列化格式，避免升级后默认切到 Kryo5。
+codec: !<org.redisson.codec.MarshallingCodec> {}
 singleServerConfig:
   address: "redis://127.0.0.1:6379"
   password: 123456

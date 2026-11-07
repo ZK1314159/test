@@ -19,7 +19,7 @@ import com.test.entity.PostRequestDto;
  * Date: 2022/1/16 10:11
  */
 @FeignClient(name = "feignTestClient",
-             url = "http://localhost:9001",
+             url = "${test.feign.url:http://localhost:9001}",
              fallbackFactory = TestFallbackFactory.class,
              configuration = TestFeignClient.Config.class)
 public interface TestFeignClient {
