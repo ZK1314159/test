@@ -1,61 +1,79 @@
 package com.test.agent.mcp;
 
-import com.test.agent.ConversionUploadLogTool;
-import io.modelcontextprotocol.spec.McpSchema;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-class ConversionMcpServerTest {
-    private final LocalDateTime anchor = LocalDateTime.parse("2026-11-01T16:00:00");
-    private final ConversionUploadLogTool query = mock(ConversionUploadLogTool.class);
+import io.modelcontextprotocol.spec.McpSchema;
 
-    @Test
-    void validCallDelegatesAndReturnsStructuredAndTextEvidence() {
-        when(query.querySummary(anchor.minusHours(1), anchor)).thenReturn(Map.of("total", 100));
-        var result = new ConversionMcpServer(query, anchor).specification().callHandler().apply(null,
-                new McpSchema.CallToolRequest("query_conversion_summary", arguments("15:00:00", "16:00:00")));
-        assertFalse(result.isError());
-        assertEquals(Map.of("total", 100), result.structuredContent());
-        assertTrue(((McpSchema.TextContent) result.content().get(0)).text().contains("100"));
-        verify(query).querySummary(anchor.minusHours(1), anchor);
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.UncategorizedSQLException;
+
+import java.sql.SQLException;
+import java.util.*;
+
+class ConversionMcpServerTest {
+    final SqlQueryTool query = mock(SqlQueryTool.class);
+
+    McpSchema.CallToolResult call(String name, Map<String, Object> args) {
+        return new ConversionMcpServer(query)
+                .specification()
+                .callHandler()
+                .apply(null, new McpSchema.CallToolRequest(name, args));
     }
 
     @Test
-    void invalidArgumentsAndUnauthorizedWindowsNeverQueryDatabase() {
-        List<Map<String, Object>> invalid = List.of(
-                Map.of(), Map.of("start", "bad-date", "end", anchor.toString()),
-                Map.of("start", 15, "end", anchor.toString()),
-                Map.of("start", "2026-11-01T15:00:00", "end", anchor.toString(), "sql", "DELETE"),
-                arguments("13:00:00", "14:00:00"), arguments("14:00:00", "16:00:00"),
-                arguments("15:00:00", "17:00:00"), arguments("16:00:00", "15:00:00"),
-                arguments("16:00:00", "16:00:00"));
-        var handler = new ConversionMcpServer(query, anchor).specification().callHandler();
-        for (var args : invalid) {
-            var result = handler.apply(null, new McpSchema.CallToolRequest("query_conversion_summary", args));
-            assertTrue(result.isError(), args.toString());
-            assertNull(result.structuredContent());
+    void delegatesSqlAndReturnsStructuredAndTextResults() {
+        var data =
+                Map.<String, Object>of(
+                        "columns", List.of(), "rows", List.of(), "rowCount", 0, "truncated", false);
+        when(query.querySql("SHOW TABLES")).thenReturn(data);
+        var result = call("query_sql", Map.of("sql", "SHOW TABLES"));
+        assertFalse(result.isError());
+        assertEquals(data, result.structuredContent());
+        verify(query).querySql("SHOW TABLES");
+    }
+
+    @Test
+    void invalidArgumentsAndOldToolNeverExecute() {
+        for (var args :
+                List.<Map<String, Object>>of(
+                        Map.of(),
+                        Map.of("sql", 1),
+                        Map.of("sql", " "),
+                        Map.of("sql", "SELECT 1", "extra", 1))) {
+            assertTrue(call("query_sql", args).isError());
         }
+        assertTrue(call("query_conversion_summary", Map.of("sql", "SELECT 1")).isError());
         verifyNoInteractions(query);
     }
 
     @Test
-    void databaseFailureIsAnErrorRatherThanAnEmptySummary() {
-        when(query.querySummary(any(), any())).thenThrow(new IllegalStateException("database unavailable"));
-        var result = new ConversionMcpServer(query, anchor).specification().callHandler().apply(null,
-                new McpSchema.CallToolRequest("query_conversion_summary", arguments("15:00:00", "16:00:00")));
+    void marksBrokenConnectionsAsFatal() {
+        when(query.querySql(anyString()))
+                .thenThrow(
+                        new UncategorizedSQLException(
+                                "fixture", "SELECT 1", new SQLException("lost", "08003")));
+        var result = call("query_sql", Map.of("sql", "SELECT 1"));
         assertTrue(result.isError());
-        assertNull(result.structuredContent());
-        assertFalse(result.content().toString().contains("database unavailable"));
+        assertEquals(Map.of("errorType", "connection"), result.structuredContent());
     }
 
-    private Map<String, Object> arguments(String start, String end) {
-        return Map.of("start", "2026-11-01T" + start, "end", "2026-11-01T" + end);
+    @Test
+    void returnsSafeActionableErrorsInsteadOfDriverMessages() {
+        when(query.querySql(anyString()))
+                .thenThrow(
+                        new UncategorizedSQLException(
+                                "secret task",
+                                "secret sql",
+                                new SQLException(
+                                        "password=secret jdbc:mysql://secret", "42S22", 1054)));
+        var result = call("query_sql", Map.of("sql", "SELECT bad FROM foo"));
+        assertTrue(result.isError());
+        assertNull(result.structuredContent());
+        String text = ((McpSchema.TextContent) result.content().get(0)).text();
+        assertTrue(text.contains("字段不存在"));
+        assertTrue(text.contains("1054"));
+        assertFalse(text.contains("secret"));
     }
 }

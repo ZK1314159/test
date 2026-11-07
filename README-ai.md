@@ -1,9 +1,27 @@
 # AI 对话接口
 
-回传分析 Agent 已通过 stdio MCP 发现和调用 MySQL 查询工具，详见
-[第四课：stdio MCP](docs/agent/lesson-04-mcp.md)。该入口与下方文本聊天接口独立。
+SQL Agent 通过 stdio MCP 的 `query_sql(sql)` 查询本机 MySQL：模型自主探索表结构、生成 SQL，
+根据每轮结果继续查询；SQL 错误反馈给模型修正，最终回答时结束。不限制模型轮数和工具调用次数，
+允许直接回答。系统提示词位于 `src/main/resources/prompts/sql-agent.txt`。
+详见[第四课：stdio SQL MCP](docs/agent/lesson-04-mcp.md)。
 
-`POST /ai/chat` 接收 `{"prompt":"你好"}`，返回 `{"result":"模型回复"}`。
+`POST http://localhost:9000/ai/chat` 是 SQL Agent 的用户问题入口。请求中的 `prompt` 作为独立 user 消息，
+与资源文件中的系统提示词一起驱动模型自主生成 SQL、多轮查询并最终回答。
+
+```json
+{"prompt":"对比2026-11-01 14:00至15:00和15:00至16:00的回传情况，说明变化和判断限制"}
+```
+
+响应保留原来的 `result` 字符串，并增加实际工具调用记录及统计：
+
+```json
+{"result":"模型最终回答","observations":[],"modelRequests":1,"toolCalls":0}
+```
+
+每个请求独立维护内部多轮上下文，不跨 HTTP 请求保存对话。请求结束后关闭 MCP 子进程；
+SQL 错误可交给模型修正，不可恢复的连接、协议或模型故障返回错误，保留原始异常链。
+当前工具循环使用 `AI_PROVIDER=codex`；`AiClient.complete()` 仍供独立文本调用使用。
+请从 IDEA 或 Maven 普通 classpath 启动应用，MCP 子进程启动暂不支持 Boot 嵌套 JAR classpath。
 原 `/deepseek/chat` 入口已更名为 `/ai/chat`。
 
 ## 配置切换
@@ -40,7 +58,7 @@ export AI_PROVIDER=codex
 应用（例如运行 IDEA 内置 Maven 的 `spring-boot:run`）。首次读取钥匙串时，macOS
 可能要求授权访问；读取失败应停止启动，不用空密钥继续运行。
 
-切回 DeepSeek 时设置 `AI_PROVIDER=deepseek`，并提供 `DEEPSEEK_API_KEY`。
+独立文本调用可通过 `AI_PROVIDER=deepseek` 和 `DEEPSEEK_API_KEY` 使用 DeepSeek；当前 `/ai/chat` SQL Agent 需要 `codex`。
 
 ```bash
 curl -X POST http://localhost:9000/ai/chat \
@@ -52,5 +70,9 @@ curl -X POST http://localhost:9000/ai/chat \
 
 `AiClientTest` 和 `AiControllerTest` 不调用外部 API。
 `AiLiveTest` 默认关闭；显式设置 `AI_LIVE_TEST=true` 并注入密钥后，验证真实模型调用，
-包括读取 YAML 配置、Spring 注入、`/ai/chat` 请求处理和结果解析，不依赖数据库或 Redis。
+包括读取 YAML 配置、Spring 注入、`/ai/chat` 请求处理和结果解析，需要本机 MySQL MCP，不依赖 Redis。
 该用例会产生实际 API 用量。
+
+`AiChatHttpLiveTest` 通过 `AGENT_HTTP_LIVE_TEST=true` 显式开启，在空闲的9000端口启动真实HTTP服务，
+向 `/ai/chat` POST 用户问题，经过真实模型、MCP与MySQL后检查响应；测试结束自动关闭该测试服务。
+可用 `-Dagent.http.result=/绝对路径/response.json` 导出实际响应。

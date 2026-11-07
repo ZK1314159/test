@@ -1,7 +1,6 @@
 package com.test.agent.mcp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.agent.ConversionUploadLogTool;
 import io.modelcontextprotocol.json.jackson2.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
@@ -14,71 +13,89 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-/** 协议入口：声明工具、校验授权窗口，再调用原来的 JDBC 查询。 */
+/** stdio 协议入口：仅开放通用只读 SQL 工具。 */
 public class ConversionMcpServer {
-    public static final String TOOL_NAME = "query_conversion_summary";
+    public static final String TOOL_NAME = "query_sql";
     private static final Logger log = LoggerFactory.getLogger(ConversionMcpServer.class);
-    private final ConversionUploadLogTool query;
-    private final LocalDateTime anchor;
+    private final SqlQueryTool query;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public ConversionMcpServer(ConversionUploadLogTool query, LocalDateTime anchor) {
+    public ConversionMcpServer(SqlQueryTool query) {
         this.query = Objects.requireNonNull(query);
-        this.anchor = Objects.requireNonNull(anchor);
     }
 
     public static McpSchema.Tool toolDefinition() {
-        return McpSchema.Tool.builder()
-                .name(TOOL_NAME)
-                .description("只读查询指定时间窗口创建的回传记录的当前状态统计；每次至多一小时，"
-                        + "仅限服务端锚点前两小时。按数据库当地时间解释，created_at 左闭右开，"
-                        + "不是发送尝试次数；successRate 为 0 到 1，null 表示无数据。")
+        return McpSchema.Tool.builder().name(TOOL_NAME)
+                .description("执行本机 MySQL 单条只读 SQL，默认库 tdtracking。可查询任意表、JOIN、聚合、子查询、CTE，"
+                        + "或通过 SHOW TABLES、SHOW COLUMNS、DESCRIBE、information_schema 探索结构。"
+                        + "不允许写入、锁定或文件输出。每次超时10秒，最多200行、1 MiB；truncated表示结果被截断。")
                 .inputSchema(new McpSchema.JsonSchema("object", Map.of(
-                        "start", Map.of("type", "string", "description", "开始时间，包含，ISO本地时间"),
-                        "end", Map.of("type", "string", "description", "结束时间，不包含，ISO本地时间")),
-                        List.of("start", "end"), false, null, null))
-                .build();
+                        "sql", Map.of("type", "string", "description", "完整的单条 MySQL 只读 SQL")),
+                        List.of("sql"), false, null, null)).build();
     }
 
     public McpServerFeatures.SyncToolSpecification specification() {
         return new McpServerFeatures.SyncToolSpecification(toolDefinition(), (exchange, request) -> handle(request));
     }
 
-    // 本教学服务复用单连接，串行执行查询，不在等待模型时持有事务。
+    // 服务复用单连接，串行查询，不在等待模型时持有事务。
     private synchronized McpSchema.CallToolResult handle(McpSchema.CallToolRequest request) {
         try {
             Map<String, Object> args = request.arguments();
-            if (!TOOL_NAME.equals(request.name()) || args == null
-                    || !args.keySet().equals(Set.of("start", "end"))
-                    || !(args.get("start") instanceof String) || !(args.get("end") instanceof String)) {
-                throw new IllegalArgumentException("仅允许 start/end 两个时间字符串");
+            if (!TOOL_NAME.equals(request.name()) || args == null || !args.keySet().equals(Set.of("sql"))
+                    || !(args.get("sql") instanceof String sql) || sql.isBlank()) {
+                throw new IllegalArgumentException("仅允许一个非空 sql 字符串参数");
             }
-            LocalDateTime start = LocalDateTime.parse((String) args.get("start"));
-            LocalDateTime end = LocalDateTime.parse((String) args.get("end"));
-            if (!start.isBefore(end) || start.isBefore(anchor.minusHours(2)) || end.isAfter(anchor)
-                    || Duration.between(start, end).compareTo(Duration.ofHours(1)) > 0) {
-                throw new IllegalArgumentException("时间必须位于服务端锚点前两小时，且每次大于零、不超过一小时");
-            }
-            Map<String, Object> summary = query.querySummary(start, end);
-            return McpSchema.CallToolResult.builder().structuredContent(summary)
-                    .addTextContent(mapper.writeValueAsString(summary)).isError(false).build();
+            Map<String, Object> result = query.querySql((String) args.get("sql"));
+            return McpSchema.CallToolResult.builder().structuredContent(result)
+                    .addTextContent(mapper.writeValueAsString(result)).isError(false).build();
         } catch (IllegalArgumentException e) {
-            log.warn("MCP 查询参数被拒绝，tool={}，anchor={}", TOOL_NAME, anchor, e);
-            return McpSchema.CallToolResult.builder().isError(true)
-                    .addTextContent("时间参数无效：仅允许 start/end，范围为锚点前两小时，每次至多一小时").build();
+            log.warn("MCP SQL 查询被拒绝，tool={}", TOOL_NAME, e);
+            return error(e.getMessage());
         } catch (Exception e) {
-            log.error("MCP 统计查询失败，tool={}，anchor={}", TOOL_NAME, anchor, e);
-            return McpSchema.CallToolResult.builder().isError(true)
-                    .addTextContent("统计查询失败，请查看服务端日志；不能将失败当作零条记录").build();
+            log.error("MCP SQL 查询失败，tool={}", TOOL_NAME, e);
+            for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+                if (cause instanceof java.sql.SQLException sql && sql.getSQLState() != null
+                        && sql.getSQLState().startsWith("08")) {
+                    return McpSchema.CallToolResult.builder().isError(true)
+                            .structuredContent(Map.of("errorType", "connection"))
+                            .addTextContent("数据库连接中断，请检查服务端连接").build();
+                }
+            }
+            return error(databaseError(e));
         }
+    }
+
+    private McpSchema.CallToolResult error(String message) {
+        return McpSchema.CallToolResult.builder().isError(true).addTextContent(message).build();
+    }
+
+    private String databaseError(Exception failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof java.sql.SQLException sql) {
+                String hint = switch (sql.getErrorCode()) {
+                    case 1064 -> "SQL 语法错误，请调整 MySQL 语法";
+                    case 1054 -> "字段不存在，请先查询表结构";
+                    case 1146 -> "表不存在，请先查询库表结构";
+                    case 1052 -> "字段名不明确，请补充表别名";
+                    case 1142, 1227 -> "当前数据库账户没有查询权限";
+                    case 3024, 1317 -> "查询超时或被取消，请缩小查询范围";
+                    default -> sql instanceof java.sql.SQLTimeoutException ? "查询超时，请缩小查询范围"
+                            : "数据库查询失败，请检查语法、表结构或连接状态";
+                };
+                // 不返回驱动原始消息，其中可能含连接信息或数据。
+                String state = sql.getSQLState();
+                return hint + "；SQLState=" + (state != null && state.matches("[A-Z0-9]{5}") ? state : "unknown")
+                        + "，errorCode=" + sql.getErrorCode();
+            }
+        }
+        return "查询失败，请查看服务端日志";
     }
 
     public void serve(InputStream input, OutputStream output) throws InterruptedException {
@@ -103,7 +120,7 @@ public class ConversionMcpServer {
         var jsonMapper = new JacksonMcpJsonMapper(mapper);
         var transport = new StdioServerTransportProvider(jsonMapper, monitoredInput, output);
         var server = McpServer.sync(transport).jsonMapper(jsonMapper)
-                .serverInfo("conversion-summary-server", "1.0.0")
+                .serverInfo("sql-query-server", "2.0.0")
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(false).build())
                 .tools(specification()).build();
         try {

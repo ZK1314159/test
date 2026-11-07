@@ -1,6 +1,5 @@
 package com.test.agent.mcp;
 
-import com.test.agent.ConversionUploadLogTool;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
@@ -9,8 +8,6 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import java.io.PrintStream;
 import java.sql.DriverManager;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /** stdio 子进程入口：只启动本机 MySQL，不启动 Spring 应用、Redis 或模型。 */
 public class ConversionMcpServerMain {
@@ -35,11 +32,7 @@ public class ConversionMcpServerMain {
             connection.setAutoCommit(true);
             JdbcTemplate jdbc = new JdbcTemplate(new SingleConnectionDataSource(connection, true));
             jdbc.setQueryTimeout(10);
-            String configuredEnd = env.getProperty("AGENT_WINDOW_END");
-            LocalDateTime anchor = configuredEnd == null
-                    ? jdbc.queryForObject("SELECT NOW()", Timestamp.class).toLocalDateTime()
-                    : LocalDateTime.parse(configuredEnd);
-            new ConversionMcpServer(new ConversionUploadLogTool(jdbc), anchor)
+            new ConversionMcpServer(new SqlQueryTool(jdbc))
                     .serve(System.in, protocolOutput);
         }
     }

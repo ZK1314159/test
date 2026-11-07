@@ -45,9 +45,9 @@ class ConversionAgentLiveTest {
                     ? LocalDateTime.now(ZoneId.of("Asia/Shanghai"))
                     : LocalDateTime.parse(configuredEnd);
             // Agent 不再持有数据库连接；子进程负责本机 MySQL 访问。
-            try (ConversionMcpClient mcp = ConversionMcpClient.startLocal(anchor)) {
+            try (ConversionMcpClient mcp = ConversionMcpClient.startLocal()) {
                 String goal = "分析截至 " + anchor + " 最近一小时的回传是否正常，必要时与上一小时比较。"
-                        + "请自行选择查询参数，说明证据和判断限制。";
+                        + "请自行探索结构并生成 SQL，说明证据和判断限制。";
                 Map<String, Object> result = new ConversionAgent(mcp,
                         context.getBean(AiClient.class), mapper).run(goal, anchor, trace);
                 assertTrue(((Number) result.get("toolCalls")).intValue() >= 1);
